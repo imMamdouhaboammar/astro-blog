@@ -1,0 +1,300 @@
+---
+import PixelIcon from "./PixelIcon.astro";
+
+type Network = "facebook" | "linkedin" | "github" | "instagram" | "x";
+interface Props {
+  socialLinks: Partial<Record<Network, string>>;
+  whatsappHref: string;
+  loginHref: string;
+  homeHref?: string;
+  avatarSrc?: string;
+  avatarAlt?: string;
+  loginLabel?: string;
+}
+const assetBase = import.meta.env.BASE_URL;
+const {
+  socialLinks,
+  whatsappHref,
+  loginHref,
+  homeHref = assetBase,
+  avatarSrc = `${assetBase}pixel-navbar/mamdouh-pixel.webp`,
+  avatarAlt = "ممدوح أبو عمّار",
+  loginLabel = "دخول",
+} = Astro.props;
+
+// In RTL, the list order facebook -> linkedin -> github -> instagram -> x
+// places facebook on the right (near Home) and x on the left (near WhatsApp),
+// which produces the exact visual sequence: [دخول] [WhatsApp] [X] [Instagram] [GitHub] [LinkedIn] [Facebook] [Home] [Avatar]
+const socials: { name: Network; label: string }[] = [
+  { name: "facebook", label: "Facebook" },
+  { name: "linkedin", label: "LinkedIn" },
+  { name: "github", label: "GitHub" },
+  { name: "instagram", label: "Instagram" },
+  { name: "x", label: "X" },
+];
+
+const visibleSocials = socials.filter(({ name }) => socialLinks[name]?.trim());
+const homePath = new URL(homeHref, Astro.url).pathname;
+const isHome = Astro.url.pathname === homePath;
+---
+
+<nav class="pixel-nav-wrapper" dir="rtl" aria-label="التنقل الرئيسي">
+  <div class="pixel-nav-capsule">
+    <!-- اليمين: الأفاتار والصفحة الرئيسية -->
+    <div class="pixel-nav-side pixel-nav-side--home">
+      <a
+        class="pixel-nav-avatar"
+        href={homeHref}
+        aria-label={`${avatarAlt}، الرئيسية`}
+      >
+        <img src={avatarSrc} alt="" width="42" height="42" decoding="async" />
+      </a>
+      <a
+        class="pixel-nav-icon"
+        href={homeHref}
+        aria-label="الرئيسية"
+        title="الرئيسية"
+        aria-current={isHome ? "page" : undefined}
+      >
+        <PixelIcon name="home" size={24} />
+      </a>
+    </div>
+
+    <!-- الوسط: أيقونات التواصل الاجتماعي -->
+    <ul class="pixel-nav-socials" aria-label="حساباتي">
+      {
+        visibleSocials.map(({ name, label }) => (
+          <li>
+            <a
+              class="pixel-nav-icon"
+              href={socialLinks[name]}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${label}، يفتح في علامة تبويب جديدة`}
+              title={label}
+            >
+              <PixelIcon name={name} size={24} />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <!-- اليسار: الواتساب وزر الدخول الأخضر -->
+    <div class="pixel-nav-side pixel-nav-side--action">
+      {
+        whatsappHref && (
+          <a
+            class="pixel-nav-icon pixel-nav-whatsapp"
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="محادثة واتساب، تفتح في علامة تبويب جديدة"
+            title="محادثة واتساب"
+          >
+            <PixelIcon name="whatsapp" size={24} />
+          </a>
+        )
+      }
+      <a class="pixel-nav-login" href={loginHref} aria-label={loginLabel}>
+        <span>{loginLabel}</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<style>
+  .pixel-nav-wrapper {
+    inline-size: 100%;
+    max-inline-size: 1280px;
+    margin-inline: auto;
+    padding: 24px 24px 0;
+    box-sizing: border-box;
+    font-family: "Noto Sans Arabic Variable", "Noto Sans Arabic", sans-serif;
+  }
+
+  .pixel-nav-capsule {
+    --pn-paper: #fff8e9;
+    --pn-ink: #432b1c;
+    --pn-edge: #432b1c;
+    --pn-shadow: #d6bc94;
+    --pn-green: #1f6f59;
+    --pn-green-hover: #175745;
+    --pn-focus: #075e54;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    background: var(--pn-paper);
+    border: 2px solid var(--pn-edge);
+    border-radius: 14px;
+    box-shadow: 0 4px 0 var(--pn-shadow);
+    padding: 8px 24px;
+    inline-size: 100%;
+    min-block-size: 58px;
+    box-sizing: border-box;
+  }
+
+  .pixel-nav-capsule :where(a, ul, li, img, svg, div) {
+    box-sizing: border-box;
+  }
+
+  .pixel-nav-capsule a {
+    text-decoration: none;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .pixel-nav-capsule a:focus-visible {
+    outline: 2px solid var(--pn-focus);
+    outline-offset: 3px;
+  }
+
+  .pixel-nav-side {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .pixel-nav-avatar {
+    display: grid;
+    place-items: center;
+    inline-size: 42px;
+    block-size: 42px;
+    flex-shrink: 0;
+    border: 2px solid var(--pn-edge);
+    border-radius: 8px;
+    background: #2a201a;
+    overflow: hidden;
+    transition: transform 0.1s ease;
+  }
+
+  .pixel-nav-avatar img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    image-rendering: pixelated;
+  }
+
+  .pixel-nav-avatar:hover {
+    transform: translateY(-1px);
+  }
+
+  .pixel-nav-socials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .pixel-nav-socials li {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .pixel-nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 32px;
+    block-size: 32px;
+    flex-shrink: 0;
+    color: var(--pn-ink);
+    border-radius: 6px;
+    transition: transform 0.12s ease;
+  }
+
+  .pixel-nav-icon:hover {
+    transform: translateY(-2px);
+  }
+
+  .pixel-nav-icon:active {
+    transform: translateY(1px);
+  }
+
+  .pixel-nav-icon svg {
+    display: block;
+    image-rendering: pixelated;
+  }
+
+  .pixel-nav-login {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--pn-green);
+    color: #ffffff;
+    border: 2px solid var(--pn-edge);
+    border-radius: 7px;
+    padding: 5px 16px;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+    box-shadow: 0 2px 0 var(--pn-edge);
+    transition:
+      background 0.1s ease,
+      transform 0.1s ease;
+  }
+
+  .pixel-nav-login:hover {
+    background: var(--pn-green-hover);
+  }
+
+  .pixel-nav-login:active {
+    transform: translateY(2px);
+    box-shadow: none;
+  }
+
+  @media (max-width: 960px) {
+    .pixel-nav-wrapper {
+      max-inline-size: 850px;
+      padding: 20px 24px 0;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .pixel-nav-wrapper {
+      padding: 16px 14px 0;
+    }
+    .pixel-nav-capsule {
+      gap: 10px;
+      padding: 6px 10px;
+    }
+    .pixel-nav-avatar {
+      inline-size: 36px;
+      block-size: 36px;
+    }
+    .pixel-nav-socials {
+      gap: 6px;
+    }
+    .pixel-nav-icon {
+      inline-size: 28px;
+      block-size: 28px;
+    }
+    .pixel-nav-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+    .pixel-nav-login {
+      padding: 4px 10px;
+      font-size: 13px;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .pixel-nav-capsule {
+      border-color: CanvasText;
+    }
+    .pixel-nav-login {
+      border-color: ButtonText;
+    }
+  }
+</style>

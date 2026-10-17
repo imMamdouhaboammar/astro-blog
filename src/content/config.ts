@@ -1,5 +1,6 @@
 import { SITE } from "@config";
 import { defineCollection, z } from "astro:content";
+import { CATEGORY_SLUGS } from "@utils/categories";
 
 const blog = defineCollection({
   type: "content",
@@ -18,8 +19,16 @@ const blog = defineCollection({
         })
         .or(z.string())
         .optional(),
+      heroImage: z.string().optional(),
+      seriesImage: z.string().optional(),
       description: z.string(),
       canonicalURL: z.string().optional(),
+      category: z
+        .string()
+        .refine(val => CATEGORY_SLUGS.includes(val), {
+          message: "Invalid category slug",
+        })
+        .optional(),
     }),
 });
 

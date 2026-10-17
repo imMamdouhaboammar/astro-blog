@@ -1,0 +1,44 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { postUrl, getPostImage } from "@utils/categories";
+
+export interface Props {
+  post: CollectionEntry<"blog">;
+  index?: number;
+}
+
+const { post, index = 0 } = Astro.props;
+const dateObj = new Date(post.data.modDatetime ?? post.data.pubDatetime);
+const dateIso = dateObj.toISOString();
+const formattedDate = new Intl.DateTimeFormat("ar-EG", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+}).format(dateObj);
+
+const cardImage = getPostImage(post);
+---
+
+<a class={`guide-card tint-${index % 6}`} href={postUrl(post)}>
+  {
+    cardImage && (
+      <div class="guide-card-preview">
+        <img src={cardImage} alt="" loading="lazy" />
+      </div>
+    )
+  }
+  <div class="tags">
+    {
+      post.data.tags.map((t, i) => (
+        <span class={`tag tag-${i % 2}`} dir="auto">
+          {t}
+        </span>
+      ))
+    }
+  </div>
+  <h2>{post.data.title}</h2>
+  <p>{post.data.description}</p>
+  <span class="updated">
+    آخر تحديث <time datetime={dateIso}>{formattedDate}</time>
+  </span>
+</a>

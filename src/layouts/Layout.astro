@@ -1,9 +1,15 @@
 ---
 import { LOCALE, SITE } from "@config";
-import "@styles/base.css";
-import { ViewTransitions } from "astro:transitions";
+import "@styles/global.css";
+import PixelNavbar from "@components/PixelNavbar.astro";
 
-const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
+const socialLinks = {
+  facebook: "https://www.facebook.com/imMamdouhaboammar",
+  linkedin: "https://www.linkedin.com/in/mamdouh-aboammar/",
+  github: "https://github.com/imMamdouhaboammar",
+  instagram: "https://www.instagram.com/imMamdouhaboammar",
+  x: "https://x.com/imMamdouh",
+};
 
 export interface Props {
   title?: string;
@@ -13,6 +19,7 @@ export interface Props {
   canonicalURL?: string;
   pubDatetime?: Date;
   modDatetime?: Date | null;
+  schema?: object;
   scrollSmooth?: boolean;
 }
 
@@ -24,8 +31,11 @@ const {
   canonicalURL = new URL(Astro.url.pathname, Astro.site).href,
   pubDatetime,
   modDatetime,
+  schema,
   scrollSmooth = false,
 } = Astro.props;
+
+const pageTitle = title === SITE.title ? title : `${title} | ${SITE.title}`;
 
 const socialImageURL = new URL(
   ogImage ?? SITE.ogImage ?? "og.png",
@@ -35,25 +45,29 @@ const socialImageURL = new URL(
 
 <!doctype html>
 <html
-  lang=`${LOCALE.lang ?? "en"}`
-  class={`${scrollSmooth && "scroll-smooth"}`}
+  lang={LOCALE.lang ?? "ar"}
+  dir="rtl"
+  class:list={[{ "scroll-smooth": scrollSmooth }]}
 >
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalURL} />
     <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#edeef1" />
 
     <!-- General Meta Tags -->
-    <title>{title}</title>
-    <meta name="title" content={title} />
+    <title>{pageTitle}</title>
+    <meta name="title" content={pageTitle} />
     <meta name="description" content={description} />
     <meta name="author" content={author} />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:title" content={title} />
+    <meta property="og:locale" content="ar_AR" />
+    <meta property="og:type" content={schema ? "article" : "website"} />
+    <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={socialImageURL} />
@@ -79,37 +93,73 @@ const socialImageURL = new URL(
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={title} />
+    <meta property="twitter:title" content={pageTitle} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={socialImageURL} />
 
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
-      rel="stylesheet"
-    />
-
-    <meta name="theme-color" content="" />
-
+    <!-- JSON-LD Structured Data -->
     {
-      // If PUBLIC_GOOGLE_SITE_VERIFICATION is set in the environment variable,
-      // include google-site-verification tag in the heading
-      // Learn more: https://support.google.com/webmasters/answer/9008080#meta_tag_verification&zippy=%2Chtml-tag
-      googleSiteVerification && (
-        <meta
-          name="google-site-verification"
-          content={googleSiteVerification}
+      schema && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(schema).replace(/</g, "\\u003c")}
         />
       )
     }
-
-    <ViewTransitions />
-
-    <script is:inline src="/toggle-theme.js"></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">انتقل إلى المحتوى</a>
+    <PixelNavbar
+      socialLinks={socialLinks}
+      whatsappHref="https://wa.me/201000000000"
+      loginHref="/#login"
+      homeHref="/"
+    />
+
     <slot />
+
+    <footer class="site-footer">
+      <a href="/">بلاي بوك ممدوح</a>
+      <span>معرفة تستحق وقتك</span>
+    </footer>
+    <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+
+    <script>
+      let timer = 0;
+      function announce(message = "") {
+        const feedback = document.querySelector("#feedback");
+        if (!feedback) return;
+        clearTimeout(timer);
+        feedback.textContent = message;
+        feedback.classList.add("visible");
+        timer = window.setTimeout(
+          () => feedback.classList.remove("visible"),
+          4000
+        );
+      }
+      document.querySelectorAll("[data-share]").forEach(button => {
+        if (button instanceof HTMLElement) {
+          button.hidden = false;
+        }
+        button.addEventListener("click", async () => {
+          try {
+            if (navigator.share) {
+              await navigator.share({
+                title: document.title,
+                url: window.location.href,
+              });
+            } else if (navigator.clipboard && window.isSecureContext) {
+              await navigator.clipboard.writeText(window.location.href);
+              announce("تم نسخ الرابط");
+            } else {
+              announce("يمكنك نسخ رابط الصفحة من شريط العنوان");
+            }
+          } catch (error) {
+            if (error instanceof Error && error.name === "AbortError") return;
+            announce("تعذّرت المشاركة. يمكنك نسخ الرابط من شريط العنوان");
+          }
+        });
+      });
+    </script>
   </body>
 </html>

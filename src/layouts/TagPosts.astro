@@ -1,11 +1,7 @@
 ---
 import { type CollectionEntry } from "astro:content";
 import Layout from "@layouts/Layout.astro";
-import Main from "@layouts/Main.astro";
-import Header from "@components/Header.astro";
-import Footer from "@components/Footer.astro";
-import Card from "@components/Card";
-import Pagination from "@components/Pagination.astro";
+import GuideCard from "@components/GuideCard.astro";
 import { SITE } from "@config";
 
 export interface Props {
@@ -19,31 +15,43 @@ export interface Props {
 const { currentPage, totalPages, paginatedPosts, tag, tagName } = Astro.props;
 ---
 
-<Layout title={`Tag: ${tagName} | ${SITE.title}`}>
-  <Header activeNav="tags" />
-  <Main
-    pageTitle={[`Tag:`, `${tagName}`]}
-    titleTransition={tag}
-    pageDesc={`All the articles with the tag "${tagName}".`}
-  >
-    <h1 slot="title" transition:name={tag}>{`Tag:${tag}`}</h1>
-    <ul>
-      {
-        paginatedPosts.map(({ data, slug }) => (
-          <Card href={`/posts/${slug}/`} frontmatter={data} />
-        ))
-      }
-    </ul>
-  </Main>
+<Layout
+  title={`وسم: ${tagName} | ${SITE.title}`}
+  description={`جميع البلاي بوكس التي تحمل وسم "${tagName}".`}
+>
+  <main class="home-panel" id="main">
+    <div class="home-heading">
+      <div>
+        <h1>وسم: {tagName}</h1>
+        <p>جميع البلاي بوكس المصنفة تحت وسم &ldquo;{tagName}&rdquo;</p>
+      </div>
+    </div>
 
-  <Pagination
-    {currentPage}
-    {totalPages}
-    prevUrl={`/tags/${tag}${
-      currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""
-    }/`}
-    nextUrl={`/tags/${tag}/${currentPage + 1}/`}
-  />
+    <div class="guide-grid">
+      {paginatedPosts.map((post, i) => <GuideCard post={post} index={i} />)}
+    </div>
 
-  <Footer noMarginTop={totalPages > 1} />
+    {
+      totalPages > 1 && (
+        <nav class="pagination-nav" aria-label="تنقل بين الصفحات">
+          {currentPage > 1 && (
+            <a
+              href={`/tags/${tag}${
+                currentPage - 1 !== 1 ? "/" + (currentPage - 1) : ""
+              }/`}
+            >
+              السابق
+            </a>
+          )}
+          <span>
+            {new Intl.NumberFormat("ar").format(currentPage)} /{" "}
+            {new Intl.NumberFormat("ar").format(totalPages)}
+          </span>
+          {currentPage < totalPages && (
+            <a href={`/tags/${tag}/${currentPage + 1}/`}>التالي</a>
+          )}
+        </nav>
+      )
+    }
+  </main>
 </Layout>
