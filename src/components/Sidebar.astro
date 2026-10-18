@@ -49,8 +49,12 @@ const { active } = Astro.props;
     ".category-disclosure"
   );
   const mobile = window.matchMedia("(max-width: 960px)");
+  const summary = panel?.querySelector("summary");
   function syncPanel() {
-    if (panel) panel.open = !mobile.matches;
+    if (!panel) return;
+    const compact = mobile.matches;
+    panel.open = !compact;
+    if (summary) summary.tabIndex = compact ? 0 : -1;
   }
   syncPanel();
   mobile.addEventListener("change", syncPanel);
