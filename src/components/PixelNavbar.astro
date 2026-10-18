@@ -4,8 +4,8 @@ import PixelIcon from "./PixelIcon.astro";
 type Network = "facebook" | "linkedin" | "github" | "instagram" | "x";
 interface Props {
   socialLinks: Partial<Record<Network, string>>;
-  whatsappHref: string;
-  loginHref: string;
+  whatsappHref?: string;
+  loginHref?: string;
   homeHref?: string;
   avatarSrc?: string;
   avatarAlt?: string;
@@ -35,7 +35,9 @@ const socials: { name: Network; label: string }[] = [
 
 const visibleSocials = socials.filter(({ name }) => socialLinks[name]?.trim());
 const homePath = new URL(homeHref, Astro.url).pathname;
+const searchHref = `${assetBase}search/`;
 const isHome = Astro.url.pathname === homePath;
+const isSearch = Astro.url.pathname === new URL(searchHref, Astro.url).pathname;
 ---
 
 <nav class="pixel-nav-wrapper" dir="rtl" aria-label="التنقل الرئيسي">
@@ -80,8 +82,11 @@ const isHome = Astro.url.pathname === homePath;
       }
     </ul>
 
-    <!-- اليسار: الواتساب وزر الدخول الأخضر -->
+    <!-- البحث وإجراءات الحساب -->
     <div class="pixel-nav-side pixel-nav-side--action">
+      <a class="pixel-nav-icon pixel-nav-search" href={searchHref} aria-label="البحث" title="البحث" aria-current={isSearch ? "page" : undefined}>
+        <PixelIcon name="search" size={24} />
+      </a>
       {
         whatsappHref && (
           <a
@@ -96,9 +101,13 @@ const isHome = Astro.url.pathname === homePath;
           </a>
         )
       }
-      <a class="pixel-nav-login" href={loginHref} aria-label={loginLabel}>
-        <span>{loginLabel}</span>
-      </a>
+      {
+        loginHref && (
+          <a class="pixel-nav-login" href={loginHref} aria-label={loginLabel}>
+            <span>{loginLabel}</span>
+          </a>
+        )
+      }
     </div>
   </div>
 </nav>
@@ -257,6 +266,21 @@ const isHome = Astro.url.pathname === homePath;
     .pixel-nav-wrapper {
       max-inline-size: 850px;
       padding: 20px 24px 0;
+    }
+  }
+
+  /* Wrap social links below the main controls before the capsule gets cramped. */
+  @media (max-width: 760px) {
+    .pixel-nav-capsule { flex-wrap: wrap; column-gap: 10px; row-gap: 8px; }
+    .pixel-nav-side--home { order: 1; }
+    .pixel-nav-side--action { order: 2; }
+    .pixel-nav-socials {
+      order: 3;
+      flex: 0 0 100%;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-block-start: 1px solid var(--pn-shadow);
+      padding-block-start: 8px;
     }
   }
 

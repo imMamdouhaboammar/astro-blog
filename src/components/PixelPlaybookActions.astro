@@ -1,7 +1,7 @@
 ---
 interface Props {
-  subscribeHref: string;
-  purchaseHref: string;
+  subscribeHref?: string;
+  purchaseHref?: string;
   shareUrl?: string;
   shareTitle?: string;
   purchaseLabel?: string;
@@ -18,7 +18,7 @@ const {
 ---
 
 <pixel-playbook-actions
-  class:list={["pixel-actions", { "pixel-actions--compact": compact }]}
+  class:list={["pixel-actions", { "pixel-actions--compact": compact, "pixel-actions--single": !subscribeHref && !purchaseHref }]}
   dir="rtl"
   data-share-url={shareUrl}
   data-share-title={shareTitle}
@@ -26,7 +26,7 @@ const {
   <div
     class="pixel-actions__grid"
     role="group"
-    aria-label="شارك واشترك واحصل على النسخة المدفوعة"
+    aria-label="إجراءات البلاي بوكس"
   >
     <button class="pixel-action" type="button" data-share>
       <svg
@@ -50,7 +50,9 @@ const {
       </svg>
       <span>شارك الـ <bdi dir="ltr">PLAYBOOKS</bdi></span>
     </button>
-    <a class="pixel-action" href={subscribeHref}>
+    {
+      subscribeHref && (
+        <a class="pixel-action" href={subscribeHref}>
       <svg
         class="pixel-action__icon"
         width="32"
@@ -75,8 +77,12 @@ const {
           fill="#478f7f"></path>
       </svg>
       <span>اشترك في النشرة البريدية</span>
-    </a>
-    <a class="pixel-action pixel-action--primary" href={purchaseHref}>
+        </a>
+      )
+    }
+    {
+      purchaseHref && (
+        <a class="pixel-action pixel-action--primary" href={purchaseHref}>
       <svg
         class="pixel-action__icon"
         width="40"
@@ -98,7 +104,9 @@ const {
         <path d="M10 22h6v2h-6Zm14 0h6v2h-6Z" fill="#fff5d7"></path>
       </svg>
       <span>{purchaseLabel}</span>
-    </a>
+        </a>
+      )
+    }
   </div>
   <span
     class="pixel-actions__status"
@@ -137,6 +145,9 @@ const {
     display: grid;
     grid-template-columns: 1fr 1.25fr;
     gap: 18px;
+  }
+  .pixel-actions--single .pixel-actions__grid {
+    grid-template-columns: 1fr;
   }
   .pixel-action {
     --button-fill: var(--pixel-paper);

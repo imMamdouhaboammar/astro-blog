@@ -65,8 +65,8 @@ const socialChannels = [
         <h1 id="playbooks-heading">أحدث الـ PLAYBOOKS اللي تقدر تقرأها</h1>
         <div class="playbooks-header-actions">
           <PixelPlaybookActions
-            subscribeHref="#social"
-            purchaseHref="#playbooks"
+            subscribeHref={import.meta.env.PUBLIC_NEWSLETTER_URL}
+            purchaseHref={import.meta.env.PUBLIC_PLAYBOOK_PURCHASE_URL}
             shareUrl="https://astro-blog.pages.dev/"
             shareTitle="بلاي بوك ممدوح"
             compact={true}
