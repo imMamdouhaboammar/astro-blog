@@ -1,65 +1,72 @@
-[Documentation Home](README.md)
+# 📚 astro-blog Documentation
+
+Welcome to the complete documentation for this repository. This documentation is automatically generated and maintained by Woden Docbot.
+
+![Files Documented: 2](https://img.shields.io/badge/Files_Documented-2-blue) ![Coverage: 5%](https://img.shields.io/badge/Coverage-5%-orange) ![Last Updated: 2026-10-18](https://img.shields.io/badge/Last_Updated-2026--10--18-gray)
+
+## 🔗 Quick Links
+
+[📂 scripts](./scripts/README.md) | [📂 tests](./tests/README.md)
+[📋 Dependencies](./DEPENDENCIES.md)
+
 
 ---
 
-# 📁 _docs
+## 📑 Documentation Sections
 
-> **Purpose:** Documentation and lightweight QA assets for the Arabic blog build, including browser smoke-test utilities and focused automated tests for SVG accessibility.
-> 
-
-![Organization: Hierarchical](https://img.shields.io/badge/Organization-Hierarchical-blue)
-
-## 📑 Table of Contents
+### [scripts](./scripts/README.md)
+Holds small utilities for running browser-based smoke tests against the built Arabic blog, with special attention to narrow right-to-left (RTL) viewports.
 
 
-- [Overview](#overview)
-- [Subdirectories](#subdirectories)
-- [Architecture Notes](#architecture-notes)
+This directory contains a focused set of scripts used to perform browser-based smoke testing of the built Arabic blog.
 
----
+![Files: 1](https://img.shields.io/badge/Files-1-blue)
 
-## Overview
-
-This directory contains documentation-adjacent utilities and tests used to validate the built Arabic blog. At the top level there are no root files; instead the directory is organized into two focused subdirectories. The scripts/ subdirectory holds small utilities for running browser-based smoke tests against the built Arabic blog, with special attention to narrow right-to-left (RTL) viewports; it contains a core module (browser_qa.py) that implements utilities to launch and validate light-weight browser checks targeted at RTL rendering and narrow viewport behavior. The tests/ subdirectory contains automated test files that validate specific behaviors and requirements; the present test focuses on SVG accessibility and is intended to be executed as part of the project's test suite.
-
-Together these components provide lightweight QA and accessibility verification for the Arabic blog build: scripts/ offers runtime checks targeting RTL and narrow viewport rendering, while tests/ provides automated assertions for SVG accessibility concerns. The directory's role in the larger project is to house focused validation tools and tests that are run against produced site artifacts, helping ensure RTL rendering quality and accessible SVG usage without containing the main application code itself.
+### [tests](./tests/README.md)
+Contains automated test files that validate specific behaviors and requirements; in this directory the focus is on SVG accessibility tests.
 
 
-### File Organization
-
-There are no files at the _docs root; contents are split into purpose-specific subdirectories. scripts/ contains small runtime utilities (browser_qa.py) for smoke testing RTL and narrow viewports. tests/ contains automated test files focused on SVG accessibility. This separation groups runtime QA helpers and automated tests for clarity and discoverability.
-
-## 📂 Subdirectories
-
-This directory contains the following subdirectories:
-
-### [📁 scripts](./scripts/README.md)
-
-**Purpose:** Holds small utilities for running browser-based smoke tests against the built Arabic blog, focused on RTL and narrow viewport behavior (includes browser_qa.py).
+This directory holds automated tests related to the project.
 
 ![Files: 1](https://img.shields.io/badge/Files-1-blue)
 
 ---
 
-### [📁 tests](./tests/README.md)
+## 📊 Documentation Statistics
 
-**Purpose:** Contains automated test files that validate specific behaviors and requirements; currently focuses on SVG accessibility tests implemented as TypeScript test files.
-
-![Files: 1](https://img.shields.io/badge/Files-1-blue)
-
----
-## Architecture Notes
-
-- Separation of concerns: runtime smoke-test utilities (scripts/) are kept separate from automated test definitions (tests/) to make it clear which tools are executed ad-hoc versus as part of the test suite.
-- Focus areas are explicit: RTL narrow-viewport rendering and SVG accessibility are the primary validation concerns captured in this directory.
+- **Files Documented**: 2
+- **Directories**: 3
+- **Coverage**: 5%
+- **Eligible Source Files**: 43
+- **Last Updated**: 2026-10-18
 
 ---
 
-## Navigation
+## 🧭 How to Navigate
 
-**↑ Parent Directory:** [Go up](../README.md)
-**🔗 Related:** [scripts](./scripts/README.md) • [tests](./tests/README.md)
+> ℹ️ **INFO**
+> Each directory has its own README.md with detailed information about that section. Use the breadcrumb navigation at the top of each page to navigate back to parent directories.
+
+### Navigation Features
+
+- **Breadcrumbs** - At the top of each page, showing your current location
+- **Directory READMEs** - Each folder has a comprehensive overview
+- **File Documentation** - Click through to individual file documentation
+- **Search** - Use GitHub's search or your IDE's search functionality
 
 ---
 
-*Generated by Woden Docbot*
+## 🤖 About Woden DocBot
+
+This documentation is automatically generated and kept up-to-date by Woden DocBot, an AI-powered documentation assistant. DocBot analyzes code on every pull request and updates documentation to reflect changes.
+
+### Features
+
+- **Automatic Updates** - Documentation updates on every PR
+- **Comprehensive Coverage** - Files, functions, classes, and directories
+- **Smart Navigation** - Breadcrumbs, related files, and parent links
+- **AI-Powered** - Uses Azure GPT models for intelligent documentation generation
+
+---
+
+*Generated by Woden DocBot for astro-blog*
