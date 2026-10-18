@@ -35,6 +35,8 @@ def verify_viewport(page, width, route):
         assert page.locator(".about-portrait").is_visible(), "Profile portrait missing"
         assert page.locator(".about-post").count() > 0, "Selected posts missing"
         assert page.locator(".about-embed").count() >= 2, "Social embeds missing"
+        assert page.locator(".about-embed-slot iframe").count() == 0, "Embeds loaded without consent"
+        assert page.locator("[data-load-embed]").count() >= 2, "Embed controls are missing"
     if route.startswith("/posts/"):
         assert page.locator(".reading-index").count() == 1, "Article table of contents missing"
         assert page.locator(".reading-index a").count() >= 2, "Article lacks section links"
@@ -91,6 +93,12 @@ def main():
                         assert summary.get_attribute("tabindex") == expected_tabindex, "Sidebar disclosure is incorrectly keyboard focusable"
                     elif route == "/about/":
                         page.screenshot(path=str(SCREENSHOTS / f"about-{width}.png"), full_page=True)
+                        if width == 1280:
+                            page.route("https://www.linkedin.com/**", lambda req: req.abort())
+                            page.locator("[data-load-embed]").first.click()
+                            iframe = page.locator(".about-embed-slot iframe").first
+                            assert iframe.count() == 1, "Social preview did not create an iframe on request"
+                            assert (iframe.get_attribute("src") or "").startswith("https://www.linkedin.com/embed/"), "Untrusted embed origin"
                     elif route.startswith("/posts/"):
                         page.screenshot(path=str(SCREENSHOTS / f"article-{width}.png"), full_page=True)
                 assert "البحث" not in page.title(), "Post page should have the article title"
