@@ -115,6 +115,11 @@ def main():
                 page.locator(".pixel-nav-search").click()
                 page.wait_for_url("**/search/")
                 assert page.title().count("بلاي بوك ممدوح") == 1, "Duplicated site name in search title"
+                # The search input is server-rendered; wait for React hydration before
+                # interacting with the controlled field, or the first edit can be lost.
+                islands = page.locator("astro-island")
+                assert islands.count() >= 1, "Search component island is missing"
+                page.locator("astro-island[ssr]").wait_for(state="detached", timeout=20000)
                 search = page.locator('input[type="search"]')
                 search.fill("PyMC")
                 page.locator(".search-result-item").first.wait_for()
