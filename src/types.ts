@@ -17,3 +17,13 @@ export type SocialObjects = {
   active: boolean;
   linkTitle: string;
 }[];
+
+export type PixelIconName =
+  | "home"
+  | "facebook"
+  | "linkedin"
+  | "github"
+  | "instagram"
+  | "x"
+  | "whatsapp"
+  | "search";

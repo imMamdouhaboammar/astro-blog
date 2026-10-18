@@ -1,0 +1,86 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@layouts/Layout.astro";
+import Sidebar from "@components/Sidebar.astro";
+import GuideCard from "@components/GuideCard.astro";
+import Icon from "@components/Icon.astro";
+import Share from "@components/Share.astro";
+import getSortedPosts from "@utils/getSortedPosts";
+import {
+  CATEGORIES,
+  getCategoryPosts,
+  postUrl,
+  getPostImage,
+  type Category,
+} from "@utils/categories";
+
+export function getStaticPaths() {
+  return CATEGORIES.map(category => ({
+    params: { slug: category.slug },
+    props: { category },
+  }));
+}
+
+export interface Props {
+  category: Category;
+}
+
+const { category } = Astro.props;
+const posts = await getCollection("blog");
+const sortedPosts = getSortedPosts(posts);
+const categoryPosts = getCategoryPosts(sortedPosts, category.slug);
+
+const [featured, ...rest] = categoryPosts;
+---
+
+<Layout title={category.name} description={category.description}>
+  <div class="content-shell">
+    <Sidebar active={category.slug} />
+    <main class="category-content" id="main">
+      <div class="category-intro">
+        <h1>{category.name}</h1>
+        <p>{category.description}</p>
+        <Share />
+      </div>
+
+      {
+        featured ? (
+          <>
+            <a href={postUrl(featured)} class="featured-guide">
+              <div class="featured-copy">
+                <span class="featured-label">بلاي بوك مميّز</span>
+                <h2>{featured.data.title}</h2>
+                <p>{featured.data.description}</p>
+                <span class="read-more">
+                  اقرأ البلاي بوك <Icon name="arrow" size={17} />
+                </span>
+              </div>
+              <div class="featured-preview">
+                {getPostImage(featured) && (
+                  <img
+                    src={getPostImage(featured)}
+                    alt=""
+                    class="featured-preview-img"
+                    loading="lazy"
+                  />
+                )}
+              </div>
+            </a>
+
+            {rest.length > 0 && (
+              <div class="guide-grid">
+                {rest.map((post, i) => (
+                  <GuideCard post={post} index={i} />
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <div class="not-found" style="margin: 30px 0; padding: 30px;">
+            <p>لا توجد بلاي بوكس منشورة في هذا التصنيف حالياً.</p>
+          </div>
+        )
+      }
+    </main>
+  </div>
+</Layout>

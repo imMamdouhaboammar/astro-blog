@@ -11,3 +11,8 @@
 !.prettierrc
 !.eslintrc.js
 !README.md
+
+# Ignore legacy AstroPaper donor markdown posts with diff code blocks
+src/content/blog/astro-paper-*.md
+src/content/blog/how-to-*.md
+src/content/blog/setting-dates-via-git-hooks.md

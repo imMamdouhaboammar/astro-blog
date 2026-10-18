@@ -1,0 +1,342 @@
+---
+interface Props {
+  subscribeHref?: string;
+  purchaseHref?: string;
+  shareUrl?: string;
+  shareTitle?: string;
+  purchaseLabel?: string;
+  compact?: boolean;
+}
+const {
+  subscribeHref,
+  purchaseHref,
+  shareUrl = "",
+  shareTitle = "",
+  purchaseLabel = "أحصل على نسختك المدفوعة",
+  compact = false,
+} = Astro.props;
+---
+
+<pixel-playbook-actions
+  class:list={["pixel-actions", { "pixel-actions--compact": compact, "pixel-actions--single": !subscribeHref && !purchaseHref }]}
+  dir="rtl"
+  data-share-url={shareUrl}
+  data-share-title={shareTitle}
+>
+  <div
+    class="pixel-actions__grid"
+    role="group"
+    aria-label="إجراءات البلاي بوكس"
+  >
+    <button class="pixel-action" type="button" data-share>
+      <svg
+        class="pixel-action__icon"
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+        fill="none"
+        shape-rendering="crispEdges"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path
+          d="M10 14h4v-2h4v-2h4V7h3v5h-5v2h-4v2h-2v2h4v2h4v2h3v4h-3v-3h-4v-2h-4v-2h-4Z"
+          fill="#432b1c"></path>
+        <path
+          d="M22 1h7v2h2v7h-2v2h-7v-2h-2V3h2ZM3 11h7v2h2v7h-2v2H3v-2H1v-7h2Zm19 10h7v2h2v7h-2v2h-7v-2h-2v-7h2Z"
+          fill="#432b1c"></path>
+        <path d="M23 4h5v5h-5ZM4 14h5v5H4Zm19 10h5v5h-5Z" fill="#db9452"></path>
+        <path d="M23 4h5v1h-5ZM4 14h5v1H4Zm19 10h5v1h-5Z" fill="#f4bc7d"></path>
+      </svg>
+      <span>شارك الـ <bdi dir="ltr">PLAYBOOKS</bdi></span>
+    </button>
+    {
+      subscribeHref && (
+        <a class="pixel-action" href={subscribeHref}>
+      <svg
+        class="pixel-action__icon"
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+        fill="none"
+        shape-rendering="crispEdges"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M1 8h26v23H1Z" fill="#432b1c"></path><path
+          d="M3 10h22v19H3Z"
+          fill="#db9452"></path>
+        <path
+          d="M3 10h3v2h3v2h3v2h4v-2h3v-2h3v-2h3v2h-2v2h-3v2h-3v2h-6v-2H8v-2H5v-2H3Z"
+          fill="#432b1c"></path>
+        <path
+          d="M3 24h2v-2h2v-2h2v2H7v2H5v3H3Zm22 0h-2v-2h-2v-2h-2v2h2v2h2v3h2Z"
+          fill="#b8723c"></path>
+        <path
+          d="M24 0h2v6h-2Zm5 4h2v2h-2v2h-2V6h2Zm-9-1h2v4h-2V5h-2V3Zm7 9h5v2h-5Z"
+          fill="#478f7f"></path>
+      </svg>
+      <span>اشترك في النشرة البريدية</span>
+        </a>
+      )
+    }
+    {
+      purchaseHref && (
+        <a class="pixel-action pixel-action--primary" href={purchaseHref}>
+      <svg
+        class="pixel-action__icon"
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        shape-rendering="crispEdges"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M17 0h6v9h5v3h-3v3h-3v3h-4v-3h-3v-3h-3V9h5Z" fill="#432b1c"
+        ></path>
+        <path d="M19 2h2v9h4v1h-3v3h-4v-3h-3v-1h4Z" fill="#efbb5c"></path>
+        <path d="M2 22h4v-3h11v2h6v-2h11v3h4v16H24v2h-8v-2H2Z" fill="#432b1c"
+        ></path>
+        <path d="M4 24h3v11h10v2H4Zm32 0h-3v11H23v2h13Z" fill="#dca33c"></path>
+        <path d="M8 21h8v2h3v13h-2v-3H8Zm24 0h-8v2h-3v13h2v-3h9Z" fill="#ffe3a0"
+        ></path>
+        <path d="M10 22h6v2h-6Zm14 0h6v2h-6Z" fill="#fff5d7"></path>
+      </svg>
+      <span>{purchaseLabel}</span>
+        </a>
+      )
+    }
+  </div>
+  <span
+    class="pixel-actions__status"
+    data-share-status
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"></span>
+</pixel-playbook-actions>
+
+<style>
+  .pixel-actions {
+    --pixel-paper: #fff8e9;
+    --pixel-ink: #432b1c;
+    --pixel-edge: #735434;
+    --pixel-shadow: #d5bc97;
+    --pixel-green: #286d60;
+    --pixel-focus: #075e54;
+    display: block;
+    inline-size: 100%;
+    max-inline-size: 780px;
+    padding: 4px;
+    color-scheme: light;
+    font-family: var(
+      --pixel-button-font,
+      "Noto Sans Arabic Variable",
+      "Noto Sans Arabic",
+      sans-serif
+    );
+  }
+  .pixel-actions *,
+  .pixel-actions *::before,
+  .pixel-actions *::after {
+    box-sizing: border-box;
+  }
+  .pixel-actions__grid {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 18px;
+  }
+  .pixel-actions--single .pixel-actions__grid {
+    grid-template-columns: 1fr;
+  }
+  .pixel-action {
+    --button-fill: var(--pixel-paper);
+    --button-hover: #f5ead5;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-inline-size: 0;
+    min-block-size: 62px;
+    margin: 0;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 0;
+    background: var(--button-fill);
+    color: var(--pixel-ink);
+    text-decoration: none;
+    text-align: center;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.8;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow:
+      2px 0 0 var(--pixel-edge),
+      -2px 0 0 var(--pixel-edge),
+      0 -2px 0 var(--pixel-edge),
+      0 2px 0 var(--pixel-edge),
+      2px 4px 0 var(--pixel-ink),
+      -2px 4px 0 var(--pixel-ink),
+      0 6px 0 var(--pixel-shadow);
+  }
+  /* These corner pixels shape the edge without clipping the focus ring. */
+  .pixel-action::before,
+  .pixel-action::after {
+    content: "";
+    position: absolute;
+    inline-size: 4px;
+    block-size: 4px;
+    background: var(--pixel-edge);
+    pointer-events: none;
+  }
+  .pixel-action::before {
+    inset-inline-start: 0;
+    inset-block-start: 0;
+  }
+  .pixel-action::after {
+    inset-inline-end: 0;
+    inset-block-end: 0;
+  }
+  .pixel-action:hover:not(:disabled) {
+    background: var(--button-hover);
+  }
+  .pixel-action:focus-visible {
+    outline: 3px solid var(--pixel-focus);
+    outline-offset: 7px;
+    z-index: 1;
+  }
+  .pixel-action:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow:
+      2px 0 0 var(--pixel-edge),
+      -2px 0 0 var(--pixel-edge),
+      0 -2px 0 var(--pixel-edge),
+      0 2px 0 var(--pixel-ink),
+      0 3px 0 var(--pixel-shadow);
+  }
+  .pixel-action:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+  .pixel-action > span {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+  .pixel-action bdi {
+    white-space: nowrap;
+    font-size: 0.95em;
+  }
+  .pixel-action__icon {
+    display: block;
+    flex: none;
+    image-rendering: pixelated;
+  }
+  .pixel-action--primary {
+    --button-fill: var(--pixel-green);
+    --button-hover: #20594e;
+    grid-column: 1 / -1;
+    min-block-size: 72px;
+    color: var(--pixel-paper);
+    font-size: 19px;
+  }
+  .pixel-actions__status {
+    display: block;
+    min-block-size: 26px;
+    margin-block-start: 12px;
+    color: var(--pixel-green);
+    font-size: 13px;
+    line-height: 1.8;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 560px) {
+    .pixel-actions__grid {
+      grid-template-columns: 1fr;
+      gap: 17px;
+    }
+    .pixel-action {
+      min-block-size: 58px;
+      padding: 12px 15px;
+      font-size: 15px;
+      gap: 10px;
+    }
+    .pixel-action--primary {
+      grid-column: auto;
+      min-block-size: 66px;
+      font-size: 17px;
+    }
+  }
+  /* Compact variant for inline header alignment */
+  .pixel-actions--compact {
+    inline-size: auto;
+    max-inline-size: none;
+    padding: 0;
+  }
+  .pixel-actions--compact .pixel-actions__grid {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+  .pixel-actions--compact .pixel-action {
+    min-block-size: 32px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow:
+      1px 0 0 var(--pixel-edge),
+      -1px 0 0 var(--pixel-edge),
+      0 -1px 0 var(--pixel-edge),
+      0 1px 0 var(--pixel-edge),
+      1px 2px 0 var(--pixel-ink),
+      -1px 2px 0 var(--pixel-ink),
+      0 2px 0 var(--pixel-shadow);
+  }
+  .pixel-actions--compact .pixel-action::before,
+  .pixel-actions--compact .pixel-action::after {
+    inline-size: 2px;
+    block-size: 2px;
+  }
+  .pixel-actions--compact .pixel-action:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow:
+      1px 0 0 var(--pixel-edge),
+      -1px 0 0 var(--pixel-edge),
+      0 -1px 0 var(--pixel-edge),
+      0 1px 0 var(--pixel-ink),
+      0 1px 0 var(--pixel-shadow);
+  }
+  .pixel-actions--compact .pixel-action__icon {
+    width: 16px;
+    height: 16px;
+  }
+  .pixel-actions--compact .pixel-action--primary {
+    grid-column: auto;
+    min-block-size: 32px;
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+  .pixel-actions--compact .pixel-action--primary .pixel-action__icon {
+    width: 18px;
+    height: 18px;
+  }
+  .pixel-actions--compact .pixel-actions__status {
+    display: none;
+  }
+  @media (max-width: 560px) {
+    .pixel-actions--compact .pixel-action,
+    .pixel-actions--compact .pixel-action--primary {
+      min-block-size: 44px;
+      min-inline-size: 44px;
+    }
+  }
+</style>

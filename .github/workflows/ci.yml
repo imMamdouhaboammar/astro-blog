@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - run: bun install --frozen-lockfile
+      - run: bun test
+      - run: bunx astro check
+      - run: bun run build
+      - name: Verify generated blog
+        run: python3 scripts/verify_integrated_blog.py
+      - name: Python import regression tests
+        run: python3 -m unittest discover -s scripts -p 'test_*.py'
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install playwright==1.55.0
+      - run: python -m playwright install --with-deps chromium
+      - name: Browser smoke tests
+        run: |
+          bunx astro preview --host 127.0.0.1 --port 4321 > /tmp/astro-preview.log 2>&1 &
+          python scripts/browser_qa.py
+      - name: Upload browser screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: browser-qa
+          path: test-artifacts/browser/
+          if-no-files-found: ignore
+
+  npm-compatibility:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Frozen npm install
+        run: npm ci --no-audit --no-fund
+      - name: npm production build
+        run: npm run build

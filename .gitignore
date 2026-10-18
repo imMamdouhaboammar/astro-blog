@@ -33,3 +33,10 @@ pnpm-debug.log*
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+
+# repowise local caches & databases
+.repowise/*
+!.repowise/config.yaml
+
+# Local verification artifacts
+screenshots/

@@ -1,24 +1,38 @@
 ---
 import { getCollection } from "astro:content";
-import Header from "@components/Header.astro";
-import Footer from "@components/Footer.astro";
 import Layout from "@layouts/Layout.astro";
-import Main from "@layouts/Main.astro";
-import Tag from "@components/Tag.astro";
 import getUniqueTags from "@utils/getUniqueTags";
 import { SITE } from "@config";
 
 const posts = await getCollection("blog");
-
 let tags = getUniqueTags(posts);
 ---
 
-<Layout title={`Tags | ${SITE.title}`}>
-  <Header activeNav="tags" />
-  <Main pageTitle="Tags" pageDesc="All the tags used in posts.">
-    <ul>
-      {tags.map(({ tag }) => <Tag {tag} size="lg" />)}
-    </ul>
-  </Main>
-  <Footer />
+<Layout
+  title={`الوسوم | ${SITE.title}`}
+  description="جميع الوسوم والموضوعات المستخدمة في البلاي بوكس والمقالات"
+>
+  <main class="home-panel" id="main">
+    <div class="home-heading">
+      <div>
+        <h1>جميع الوسوم</h1>
+        <p>تصفّح البلاي بوكس حسب الوسوم والموضوعات</p>
+      </div>
+    </div>
+
+    <div class="tags" style="gap: 12px; margin-top: 24px;">
+      {
+        tags.map(({ tag, tagName }, i) => (
+          <a
+            href={`/tags/${tag}/`}
+            class={`tag tag-${i % 2}`}
+            style="font-size: 14px; padding: 6px 16px; border-radius: 20px;"
+            dir="auto"
+          >
+            {tagName}
+          </a>
+        ))
+      }
+    </div>
+  </main>
 </Layout>
