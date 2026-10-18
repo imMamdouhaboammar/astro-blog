@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Browser smoke tests against the built Arabic blog, including narrow RTL viewports."""
 
+import json
 import os
 import time
 from pathlib import Path
@@ -43,7 +44,16 @@ def verify_viewport(page, width, route):
         for link in page.locator(".reading-index a").all():
             target_id = link.get_attribute("href")[1:]
             assert page.locator(f'[id="{target_id}"]').count() == 1, f"Broken reading anchor: {target_id}"
-    assert page.locator('script[type="application/ld+json"]').count() > 0, f"{route}: missing JSON-LD schema"
+    json_ld = page.locator('script[type="application/ld+json"]').all_text_contents()
+    assert json_ld, f"{route}: missing JSON-LD schema"
+    for block in json_ld:
+        try:
+            schema = json.loads(block)
+        except json.JSONDecodeError as error:
+            raise AssertionError(f"{route}: malformed JSON-LD: {error}") from error
+        assert isinstance(schema, dict) and schema.get("@context") == "https://schema.org", (
+            f"{route}: invalid JSON-LD root or schema context"
+        )
     assert page.locator(".pixel-nav-search").count() == 1, f"{route}: search unreachable"
     assert page.locator('a[href="/#login"]').count() == 0, "Broken login link is back"
     assert page.locator('a[href="https://wa.me/201000000000"]').count() == 0, "Placeholder WhatsApp link is back"
