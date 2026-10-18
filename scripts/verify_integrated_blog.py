@@ -63,12 +63,11 @@ def main():
         fail("Homepage still contains deleted subtitle text 'تابعني على المنصات وانضم للمجتمع التقني لتصلك أحدث البلاي بوكس والشروحات العملية فور نشرها'")
     if "pixel-nav" not in index_content:
         fail("Homepage is missing Pixel Navbar (pixel-nav)")
-    whatsapp_configured = bool(os.environ.get("PUBLIC_WHATSAPP_URL", "").strip())
-    whatsapp_present = "pixel-nav-whatsapp" in index_content
-    if whatsapp_configured and not whatsapp_present:
-        fail("Configured WhatsApp link is missing from homepage")
-    if not whatsapp_configured and whatsapp_present:
-        fail("Homepage shows WhatsApp without a configured destination")
+    expected_whatsapp = os.environ.get("PUBLIC_WHATSAPP_URL", "").strip() or "https://wa.me/201092677269"
+    if "pixel-nav-whatsapp" not in index_content:
+        fail("Homepage is missing its public WhatsApp control")
+    if expected_whatsapp not in index_content:
+        fail(f"Homepage WhatsApp destination differs from {expected_whatsapp}")
     if "https://wa.me/201000000000" in index_content:
         fail("Homepage contains the placeholder WhatsApp number")
     if "playbooks-header" not in index_content:
