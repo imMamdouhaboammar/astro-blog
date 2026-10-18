@@ -79,13 +79,16 @@ def process_file(filename: str, source_dir: Path):
         f'category: "ai-machine-learning"',
         f'featured: {"true" if cfg["featured"] else "false"}',
         f'ogImage: "{cfg["ogImage"]}"',
+        f'heroImage: "{cfg["heroImage"]}"',
     ]
     
     frontmatter = frontmatter.rstrip() + "\n" + "\n".join(additions) + "\n"
     
-    # Add hero image to top of body if not present
-    hero_md = f"\n\n![{cfg['heroAlt']}]({cfg['heroImage']})\n\n"
-    body = hero_md + body.lstrip()
+    # The page layout renders heroImage; avoid duplicating it in Markdown.
+    body = body.lstrip()
+    leading_image = re.match(r"^!\\[[^\\]]*\\]\\(([^)]+)\\)\\s*", body)
+    if leading_image and leading_image.group(1) == cfg["heroImage"]:
+        body = body[leading_image.end():].lstrip()
     
     # If part 4, also embed part-7 (connector mismatch) where contract drift is explained
     if filename == "pymc-marketing-04.md":
