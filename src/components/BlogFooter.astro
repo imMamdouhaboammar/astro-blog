@@ -1,0 +1,57 @@
+---
+import { PROFILE, SOCIAL_CHANNELS } from "@utils/profile";
+const year = new Date().getFullYear();
+---
+<footer class="editorial-footer" aria-label="فوتر المدونة">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a class="footer-identity" href="/about/">
+        <img src={PROFILE.avatar} alt="" width="52" height="52" loading="lazy" />
+        <span>ممدوح أبو عمّار</span>
+      </a>
+      <p>أفكار ومقالات عملية عن التسويق، وعلوم البيانات، وبناء المنتجات بالذكاء الاصطناعي</p>
+      <a class="footer-contact" href={PROFILE.social.whatsapp} target="_blank" rel="noopener noreferrer">خلّينا نتكلم على واتساب ↗</a>
+    </div>
+    <nav class="footer-column" aria-label="استكشف المدونة">
+      <h2>استكشف</h2>
+      <a href="/">الرئيسية</a>
+      <a href="/posts/">جميع المقالات</a>
+      <a href="/categories/ai-machine-learning/">الـ Playbooks</a>
+      <a href="/search/">البحث</a>
+      <a href="/about/">عنّي</a>
+    </nav>
+    <nav class="footer-column" aria-label="روابط المتابعة">
+      <h2>تابعني</h2>
+      {SOCIAL_CHANNELS.map(ch => (
+        <a href={PROFILE.social[ch.key]} target="_blank" rel="noopener noreferrer">{ch.title} ↗</a>
+      ))}
+      <a href={`mailto:${PROFILE.email}`}>البريد الإلكتروني ↗</a>
+    </nav>
+    <div class="footer-column footer-updates">
+      <h2>اقرأ براحتك</h2>
+      <p>المحتوى هنا متاح للقراءة والمشاركة، وبقدر الإمكان بعيد عن الزحمة</p>
+      <a href="/rss.xml">RSS · أحدث المنشورات ↗</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© {year} ممدوح أبو عمّار</span>
+    <span>معرفة تستحق وقتك</span>
+    <a href="#main">العودة للأعلى ↑</a>
+  </div>
+</footer>
+<style>
+  .editorial-footer {max-width:1232px;margin:64px auto 0;padding:0 28px;color:var(--text);border-top:1px solid #ced5db}
+  .footer-top {display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:32px;padding:42px 0 36px}
+  .footer-identity {display:inline-flex;align-items:center;gap:12px;font-family:var(--font-heading);font-size:21px;font-weight:800;text-decoration:none}
+  .footer-identity img {border-radius:10px;border:2px solid #433126;object-fit:cover;image-rendering:pixelated}
+  .footer-brand p,.footer-updates p {max-width:33ch;color:var(--muted);line-height:2;margin:16px 0}
+  .footer-contact {color:var(--accent-dark);font-weight:700}
+  .footer-column {display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+  .footer-column h2 {font-size:15px;margin:0 0 10px;font-weight:800;color:var(--text)}
+  .footer-column a {font-size:14px;line-height:1.7;color:#384451;text-decoration:none}
+  .footer-column a:hover,.footer-column a:focus-visible,.footer-identity:hover {color:var(--accent-dark);text-decoration:underline;text-underline-offset:4px}
+  .footer-bottom {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:18px 0 24px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+  .footer-bottom a {color:var(--accent-dark);font-weight:700}
+  @media(max-width:880px){.footer-top{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px}.footer-brand{grid-column:1/-1}}
+  @media(max-width:560px){.editorial-footer{margin-top:40px;padding:0 20px}.footer-top{gap:30px 18px;padding-top:32px}.footer-column a{font-size:13px}.footer-bottom{align-items:flex-start;flex-direction:column}}
+</style>

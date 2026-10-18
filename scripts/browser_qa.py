@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Browser smoke tests against the built Arabic blog, including narrow RTL viewports."""
 
+import json
 import os
 import time
 from pathlib import Path
@@ -11,7 +12,7 @@ from playwright.sync_api import sync_playwright
 
 BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:4321").rstrip("/")
 SCREENSHOTS = Path(os.getenv("BROWSER_QA_SCREENSHOTS", "test-artifacts/browser"))
-ROUTES = ("/", "/search/", "/categories/ai-machine-learning/", "/posts/pymc-marketing-01/")
+ROUTES = ("/", "/about/", "/search/", "/categories/ai-machine-learning/", "/posts/pymc-marketing-01/")
 
 
 def wait_for_server():
@@ -28,6 +29,31 @@ def wait_for_server():
 def verify_viewport(page, width, route):
     assert page.locator("html").get_attribute("dir") == "rtl", f"{route}: not RTL"
     assert page.locator("#main").count() == 1, f"{route}: missing main content"
+    assert page.locator(".editorial-footer").count() == 1, f"{route}: missing unified footer"
+    assert page.locator('a[href="/about/"]').count() >= 1, f"{route}: About page undiscoverable"
+    if route == "/about/":
+        assert page.locator("main h1").count() == 1, "About page heading missing"
+        assert page.locator(".about-portrait").is_visible(), "Profile portrait missing"
+        assert page.locator(".about-post").count() > 0, "Selected posts missing"
+        assert page.locator(".about-embed").count() >= 2, "Social embeds missing"
+        assert page.locator(".about-embed-slot iframe").count() == 0, "Embeds loaded without consent"
+        assert page.locator("[data-load-embed]").count() >= 2, "Embed controls are missing"
+    if route.startswith("/posts/"):
+        assert page.locator(".reading-index").count() == 1, "Article table of contents missing"
+        assert page.locator(".reading-index a").count() >= 2, "Article lacks section links"
+        for link in page.locator(".reading-index a").all():
+            target_id = link.get_attribute("href")[1:]
+            assert page.locator(f'[id="{target_id}"]').count() == 1, f"Broken reading anchor: {target_id}"
+    json_ld = page.locator('script[type="application/ld+json"]').all_text_contents()
+    assert json_ld, f"{route}: missing JSON-LD schema"
+    for block in json_ld:
+        try:
+            schema = json.loads(block)
+        except json.JSONDecodeError as error:
+            raise AssertionError(f"{route}: malformed JSON-LD: {error}") from error
+        assert isinstance(schema, dict) and schema.get("@context") == "https://schema.org", (
+            f"{route}: invalid JSON-LD root or schema context"
+        )
     assert page.locator(".pixel-nav-search").count() == 1, f"{route}: search unreachable"
     assert page.locator('a[href="/#login"]').count() == 0, "Broken login link is back"
     assert page.locator('a[href="https://wa.me/201000000000"]').count() == 0, "Placeholder WhatsApp link is back"
@@ -75,6 +101,14 @@ def main():
                         summary = page.locator(".category-disclosure summary")
                         expected_tabindex = "-1" if width > 960 else "0"
                         assert summary.get_attribute("tabindex") == expected_tabindex, "Sidebar disclosure is incorrectly keyboard focusable"
+                    elif route == "/about/":
+                        page.screenshot(path=str(SCREENSHOTS / f"about-{width}.png"), full_page=True)
+                        if width == 1280:
+                            page.route("https://www.linkedin.com/**", lambda req: req.abort())
+                            page.locator("[data-load-embed]").first.click()
+                            iframe = page.locator(".about-embed-slot iframe").first
+                            assert iframe.count() == 1, "Social preview did not create an iframe on request"
+                            assert (iframe.get_attribute("src") or "").startswith("https://www.linkedin.com/embed/"), "Untrusted embed origin"
                     elif route.startswith("/posts/"):
                         page.screenshot(path=str(SCREENSHOTS / f"article-{width}.png"), full_page=True)
                 assert "البحث" not in page.title(), "Post page should have the article title"
@@ -91,9 +125,27 @@ def main():
                 page.locator(".pixel-nav-search").click()
                 page.wait_for_url("**/search/")
                 assert page.title().count("بلاي بوك ممدوح") == 1, "Duplicated site name in search title"
+                # The search input is server-rendered; wait for React hydration before
+                # interacting with the controlled field, or the first edit can be lost.
+                islands = page.locator("astro-island")
+                assert islands.count() >= 1, "Search component island is missing"
+                page.locator("astro-island[ssr]").wait_for(state="detached", timeout=20000)
                 search = page.locator('input[type="search"]')
                 search.fill("PyMC")
-                page.locator(".search-result-item").first.wait_for()
+                try:
+                    page.locator(".search-result-item").first.wait_for(timeout=8000)
+                except Exception:
+                    print("SEARCH DIAGNOSTIC:", {
+                        "url": page.url,
+                        "input": search.input_value(),
+                        "status": page.locator(".search-status").all_text_contents(),
+                        "empty": page.locator(".search-empty").all_text_contents(),
+                        "islands": page.locator("astro-island").count(),
+                        "pageErrors": errors,
+                        "scripts": page.locator('script[src]').evaluate_all("(els) => els.map(e => e.src)"),
+                    }, flush=True)
+                    page.screenshot(path=str(SCREENSHOTS / f"search-failed-{width}.png"), full_page=True)
+                    raise
                 assert page.locator(".search-result-item").count() >= 1, "Known published posts missing from search"
                 search.fill("zz-nonexistent-topic-347120")
                 assert page.locator(".search-empty").is_visible(), "No-results explanation is missing"

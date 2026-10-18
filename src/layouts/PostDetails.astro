@@ -32,7 +32,9 @@ const {
   tags,
 } = post.data;
 
-const { Content } = await post.render();
+const { Content, headings } = await post.render();
+const readingSections = headings.filter(heading => heading.depth === 2 || heading.depth === 3);
+const readingMinutes = Math.max(1, Math.ceil(post.body.trim().split(/\s+/).length / 190));
 
 const category = getCategoryForPost(post);
 const allPosts = await getCollection("blog");
@@ -64,6 +66,9 @@ const schema = {
       inLanguage: "ar",
       mainEntityOfPage: postCanonical,
       articleSection: category.name,
+      author: { "@id": new URL("/about/#person", Astro.site).href },
+      publisher: { "@id": new URL("/about/#person", Astro.site).href },
+      wordCount: post.body.trim().split(/\s+/).length,
     },
     {
       "@type": "BreadcrumbList",
@@ -126,6 +131,11 @@ const formattedDate = new Intl.DateTimeFormat("ar-EG", {
         </div>
         <h1>{title}</h1>
         <p class="article-description">{description}</p>
+        <div class="reading-meta">
+          <span>حوالي {readingMinutes} دقائق قراءة</span>
+          <span aria-hidden="true">·</span>
+          <time datetime={dateIso}>{formattedDate}</time>
+        </div>
         <div class="article-toolbar">
           <Share />
           <a class="category-return" href={categoryUrl(category)}>
@@ -133,6 +143,22 @@ const formattedDate = new Intl.DateTimeFormat("ar-EG", {
             <Icon name="arrow" size={16} />
           </a>
         </div>
+        {
+          readingSections.length > 0 && (
+            <nav class="reading-index" aria-label="فهرس المقال">
+              <details open>
+                <summary>في المقال ده <span>{readingSections.length} أقسام</span></summary>
+                <ol>
+                  {readingSections.map(section => (
+                    <li class:list={[{ "reading-index-nested": section.depth === 3 }]}>
+                      <a href={`#${section.slug}`}>{section.text}</a>
+                    </li>
+                  ))}
+                </ol>
+              </details>
+            </nav>
+          )
+        }
         <div class="article-body">
           {
             getPostImage(post) && (
@@ -194,8 +220,7 @@ const formattedDate = new Intl.DateTimeFormat("ar-EG", {
       btn.type = "button";
       btn.setAttribute("aria-label", "نسخ الشفرة");
       btn.textContent = "نسخ";
-      btn.style.cssText =
-        "position: absolute; top: 8px; right: 8px; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.1); color: inherit; cursor: pointer;";
+      btn.setAttribute("title", "نسخ الشفرة");
       btn.addEventListener("click", async () => {
         const codeBlock = block.querySelector("code");
         const code =

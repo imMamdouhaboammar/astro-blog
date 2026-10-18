@@ -46,8 +46,8 @@ const isSearch = Astro.url.pathname === new URL(searchHref, Astro.url).pathname;
     <div class="pixel-nav-side pixel-nav-side--home">
       <a
         class="pixel-nav-avatar"
-        href={homeHref}
-        aria-label={`${avatarAlt}، الرئيسية`}
+        href={`${assetBase}about/`}
+        aria-label={`${avatarAlt}، من أنا`}
       >
         <img src={avatarSrc} alt="" width="42" height="42" decoding="async" />
       </a>
