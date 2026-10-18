@@ -5,7 +5,7 @@ export const SITE: Site = {
   author: "Mamdouh Aboammar",
   desc: "بلاي بوكس عربية مصوّرة في البرمجيات والأنظمة والذكاء الاصطناعي.",
   title: "بلاي بوك ممدوح",
-  ogImage: "astropaper-og.jpg",
+  ogImage: "/og.png",
   lightAndDarkMode: false,
   postPerPage: 4,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes

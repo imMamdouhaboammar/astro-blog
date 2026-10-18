@@ -17,6 +17,7 @@ export interface Props {
   pubDatetime?: Date;
   modDatetime?: Date | null;
   schema?: object;
+  ogType?: "website" | "article" | "profile";
   scrollSmooth?: boolean;
 }
 
@@ -29,6 +30,7 @@ const {
   pubDatetime,
   modDatetime,
   schema,
+  ogType,
   scrollSmooth = false,
 } = Astro.props;
 
@@ -107,7 +109,7 @@ const profileSchema = {
 
     <!-- Open Graph / Facebook -->
     <meta property="og:locale" content="ar_AR" />
-    <meta property="og:type" content={schema ? "article" : "website"} />
+    <meta property="og:type" content={ogType ?? (schema ? "article" : "website")} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />

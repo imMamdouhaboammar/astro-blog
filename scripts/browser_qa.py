@@ -11,7 +11,7 @@ from playwright.sync_api import sync_playwright
 
 BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:4321").rstrip("/")
 SCREENSHOTS = Path(os.getenv("BROWSER_QA_SCREENSHOTS", "test-artifacts/browser"))
-ROUTES = ("/", "/search/", "/categories/ai-machine-learning/", "/posts/pymc-marketing-01/")
+ROUTES = ("/", "/about/", "/search/", "/categories/ai-machine-learning/", "/posts/pymc-marketing-01/")
 
 
 def wait_for_server():
@@ -28,6 +28,20 @@ def wait_for_server():
 def verify_viewport(page, width, route):
     assert page.locator("html").get_attribute("dir") == "rtl", f"{route}: not RTL"
     assert page.locator("#main").count() == 1, f"{route}: missing main content"
+    assert page.locator(".editorial-footer").count() == 1, f"{route}: missing unified footer"
+    assert page.locator('a[href="/about/"]').count() >= 1, f"{route}: About page undiscoverable"
+    if route == "/about/":
+        assert page.locator("main h1").count() == 1, "About page heading missing"
+        assert page.locator(".about-portrait").is_visible(), "Profile portrait missing"
+        assert page.locator(".about-post").count() > 0, "Selected posts missing"
+        assert page.locator(".about-embed").count() >= 2, "Social embeds missing"
+    if route.startswith("/posts/"):
+        assert page.locator(".reading-index").count() == 1, "Article table of contents missing"
+        assert page.locator(".reading-index a").count() >= 2, "Article lacks section links"
+        for link in page.locator(".reading-index a").all():
+            target_id = link.get_attribute("href")[1:]
+            assert page.locator(f'[id="{target_id}"]').count() == 1, f"Broken reading anchor: {target_id}"
+    assert page.locator('script[type="application/ld+json"]').count() > 0, f"{route}: missing JSON-LD schema"
     assert page.locator(".pixel-nav-search").count() == 1, f"{route}: search unreachable"
     assert page.locator('a[href="/#login"]').count() == 0, "Broken login link is back"
     assert page.locator('a[href="https://wa.me/201000000000"]').count() == 0, "Placeholder WhatsApp link is back"
@@ -75,6 +89,8 @@ def main():
                         summary = page.locator(".category-disclosure summary")
                         expected_tabindex = "-1" if width > 960 else "0"
                         assert summary.get_attribute("tabindex") == expected_tabindex, "Sidebar disclosure is incorrectly keyboard focusable"
+                    elif route == "/about/":
+                        page.screenshot(path=str(SCREENSHOTS / f"about-{width}.png"), full_page=True)
                     elif route.startswith("/posts/"):
                         page.screenshot(path=str(SCREENSHOTS / f"article-{width}.png"), full_page=True)
                 assert "البحث" not in page.title(), "Post page should have the article title"
