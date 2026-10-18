@@ -46,7 +46,7 @@ const schema = {
       <p class="about-role" lang="en" dir="ltr">{PROFILE.role}</p>
       <p class="about-summary">بشتغل في المنطقة اللي بتتقاطع فيها الاستراتيجية الرقمية، والتسويق، وبناء المنتجات المدعومة بالذكاء الاصطناعي. بحب أحوّل الأفكار المعقدة لحاجات عملية تقدر تستخدمها في شغلك.</p>
       <div class="about-links">
-        <a class="about-primary" href={PROFILE.social.whatsapp} target="_blank" rel="noopener noreferrer">اتواصل معايا على واتساب ↗<span class="sr-only"> (يفتح في تبويب جديد)</span></a>
+        <a class="about-primary" href={PROFILE.social.whatsapp} aria-label="واتساب، يفتح في تبويب جديد" target="_blank" rel="noopener noreferrer">اتواصل معايا على واتساب ↗</a>
         <a class="about-secondary" href="/posts/">اقرأ المقالات</a>
       </div>
     </header>
@@ -81,9 +81,9 @@ const schema = {
       <div class="about-section-head"><h2 id="about-social">تلاقيني فين؟</h2></div>
       <div class="about-social-grid">
         {SOCIAL_CHANNELS.map(ch => (
-          <a href={PROFILE.social[ch.key]} target="_blank" rel="noopener noreferrer">
+          <a href={PROFILE.social[ch.key]} aria-label={`${ch.title}، ${ch.description}، يفتح في تبويب جديد`} target="_blank" rel="noopener noreferrer">
             <strong>{ch.title} ↗</strong><span>{ch.description}</span>
-          <span class="sr-only"> (يفتح في تبويب جديد)</span></a>
+          </a>
         ))}
         <a href={`mailto:${PROFILE.email}`}><strong>البريد الإلكتروني ↗</strong><span>{PROFILE.email}</span></a>
       </div>
@@ -93,7 +93,7 @@ const schema = {
       <div class="about-embed-grid">
         {linkedinPosts.map(post => (
           <article class="about-embed">
-            <div class="about-embed-header"><strong>LinkedIn</strong><a href={post.url} target="_blank" rel="noopener noreferrer">فتح المنشور ↗<span class="sr-only"> (يفتح في تبويب جديد)</span></a></div>
+            <div class="about-embed-header"><strong>LinkedIn</strong><a href={post.url} aria-label={`فتح منشور LinkedIn: ${post.title}، يفتح في تبويب جديد`} target="_blank" rel="noopener noreferrer">فتح المنشور ↗</a></div>
             <h3>{post.title}</h3>
             <p>{post.description}</p>
             <div class="about-embed-slot" data-embed-src={`https://www.linkedin.com/embed/feed/update/urn:li:activity:${post.id}`} data-embed-title={`منشور LinkedIn: ${post.title}`}>
@@ -102,7 +102,7 @@ const schema = {
           </article>
         ))}
         <article class="about-embed">
-          <div class="about-embed-header"><strong>Facebook</strong><a href={facebookPost && facebookEmbed ? facebookPost : PROFILE.social.facebook} target="_blank" rel="noopener noreferrer">افتح فيسبوك ↗<span class="sr-only"> (يفتح في تبويب جديد)</span></a></div>
+          <div class="about-embed-header"><strong>Facebook</strong><a href={facebookPost && facebookEmbed ? facebookPost : PROFILE.social.facebook} aria-label="فيسبوك، يفتح في تبويب جديد" target="_blank" rel="noopener noreferrer">افتح فيسبوك ↗</a></div>
           <h3>بوستات ونقاشات على فيسبوك</h3>
           {facebookEmbed ? (
             <div class="about-embed-slot" data-embed-src={facebookEmbed} data-embed-title="منشور ممدوح أبو عمّار على فيسبوك">

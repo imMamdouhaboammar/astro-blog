@@ -10,7 +10,7 @@ const year = new Date().getFullYear();
         <span>ممدوح أبو عمّار</span>
       </a>
       <p>أفكار ومقالات عملية عن التسويق، وعلوم البيانات، وبناء المنتجات بالذكاء الاصطناعي</p>
-      <a class="footer-contact" href={PROFILE.social.whatsapp} target="_blank" rel="noopener noreferrer">خلّينا نتكلم على واتساب ↗<span class="sr-only"> (يفتح في تبويب جديد)</span></a>
+      <a class="footer-contact" href={PROFILE.social.whatsapp} aria-label="واتساب، يفتح في تبويب جديد" target="_blank" rel="noopener noreferrer">خلّينا نتكلم على واتساب ↗</a>
     </div>
     <nav class="footer-column" aria-label="استكشف المدونة">
       <h2>استكشف</h2>
@@ -23,7 +23,7 @@ const year = new Date().getFullYear();
     <nav class="footer-column" aria-label="روابط المتابعة">
       <h2>تابعني</h2>
       {SOCIAL_CHANNELS.map(ch => (
-        <a href={PROFILE.social[ch.key]} target="_blank" rel="noopener noreferrer">{ch.title} ↗<span class="sr-only"> (يفتح في تبويب جديد)</span></a>
+        <a href={PROFILE.social[ch.key]} aria-label={`${ch.title}، يفتح في تبويب جديد`} target="_blank" rel="noopener noreferrer">{ch.title} ↗</a>
       ))}
       <a href={`mailto:${PROFILE.email}`}>البريد الإلكتروني ↗</a>
     </nav>
