@@ -10,7 +10,7 @@ import re
 import sys
 from pathlib import Path
 
-DIST_DIR = Path("/Users/mamdouhaboammar/Downloads/astro-blog/dist")
+DIST_DIR = Path(__file__).resolve().parents[1] / "dist"
 
 def fail(msg: str):
     print(f"❌ FAIL: {msg}")
@@ -63,8 +63,14 @@ def main():
         fail("Homepage still contains deleted subtitle text 'تابعني على المنصات وانضم للمجتمع التقني لتصلك أحدث البلاي بوكس والشروحات العملية فور نشرها'")
     if "pixel-nav" not in index_content:
         fail("Homepage is missing Pixel Navbar (pixel-nav)")
-    if "pixel-nav-whatsapp" not in index_content:
-        fail("Homepage is missing Pixel WhatsApp link (pixel-nav-whatsapp)")
+    whatsapp_configured = bool(os.environ.get("PUBLIC_WHATSAPP_URL", "").strip())
+    whatsapp_present = "pixel-nav-whatsapp" in index_content
+    if whatsapp_configured and not whatsapp_present:
+        fail("Configured WhatsApp link is missing from homepage")
+    if not whatsapp_configured and whatsapp_present:
+        fail("Homepage shows WhatsApp without a configured destination")
+    if "https://wa.me/201000000000" in index_content:
+        fail("Homepage contains the placeholder WhatsApp number")
     if "playbooks-header" not in index_content:
         fail("Homepage is missing inline Playbooks header (playbooks-header)")
     if "pixel-actions--compact" not in index_content:
