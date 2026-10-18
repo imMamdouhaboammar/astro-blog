@@ -876,6 +876,18 @@ button:active {
   border: 1px solid var(--line);
 }
 
+/* Small data-URI emoji within paragraphs are part of a sentence, not figures. */
+.article-body p img[src^="data:image/"] {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  max-width: 1.2em;
+  margin: 0 0.08em;
+  border: 0;
+  border-radius: 0;
+  vertical-align: -0.16em;
+}
+
 .article-body h2 {
   font-size: 24px;
   line-height: 1.8;
