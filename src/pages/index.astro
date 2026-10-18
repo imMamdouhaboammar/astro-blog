@@ -4,6 +4,7 @@ import Layout from "@layouts/Layout.astro";
 import PixelPlaybookActions from "@components/PixelPlaybookActions.astro";
 import PixelIcon from "@components/PixelIcon.astro";
 import Icon from "@components/Icon.astro";
+import { PROFILE, SOCIAL_CHANNELS } from "@utils/profile";
 import getSortedPosts from "@utils/getSortedPosts";
 import {
   getCategoryForPost,
@@ -21,32 +22,12 @@ const playbooks = PLAYBOOKS;
 const pinnedPosts = sortedPosts.slice(0, 8);
 
 // قسم 3: أزرار Pixels كبيرة لحسابات السوشال ميديا والمدونة
-const socialChannels = [
-  {
-    name: "linkedin" as const,
-    title: "LinkedIn",
-    description: "شروحات ومقالات تقنية معمقة ومناقشات مهنية",
-    url: "https://www.linkedin.com/in/mamdouh-aboammar/",
-  },
-  {
-    name: "x" as const,
-    title: "X (تويتر)",
-    description: "أفكار سريعة، تحديثات يومية، وخلاصات برمجية",
-    url: "https://x.com/imMamdouh",
-  },
-  {
-    name: "facebook" as const,
-    title: "فيسبوك",
-    description: "مجتمع المتابعين ونقاشات تفاعلية حول البرمجة",
-    url: "https://www.facebook.com/imMamdouhaboammar",
-  },
-  {
-    name: "github" as const,
-    title: "GitHub",
-    description: "مستودعات الشفرة والمشاريع المفتوحة والأدوات",
-    url: "https://github.com/imMamdouhaboammar",
-  },
-];
+const socialChannels = SOCIAL_CHANNELS.map(ch => ({
+  name: ch.key,
+  title: ch.title,
+  description: ch.description,
+  url: PROFILE.social[ch.key],
+}));
 ---
 
 <Layout

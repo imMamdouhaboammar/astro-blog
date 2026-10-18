@@ -3,14 +3,10 @@ import { LOCALE, SITE } from "@config";
 import "@styles/global.css";
 import PixelNavbar from "@components/PixelNavbar.astro";
 import { formatPageTitle } from "@utils/formatPageTitle";
+import BlogFooter from "@components/BlogFooter.astro";
+import { PROFILE } from "@utils/profile";
 
-const socialLinks = {
-  facebook: "https://www.facebook.com/imMamdouhaboammar",
-  linkedin: "https://www.linkedin.com/in/mamdouh-aboammar/",
-  github: "https://github.com/imMamdouhaboammar",
-  instagram: "https://www.instagram.com/imMamdouhaboammar",
-  x: "https://x.com/imMamdouh",
-};
+const socialLinks = PROFILE.social;
 
 export interface Props {
   title?: string;
@@ -38,13 +34,48 @@ const {
 
 const pageTitle = formatPageTitle(title, SITE.title);
 const loginHref = import.meta.env.PUBLIC_LOGIN_URL?.trim() || undefined;
-const whatsappHref = import.meta.env.PUBLIC_WHATSAPP_URL?.trim() || undefined;
+const whatsappHref = import.meta.env.PUBLIC_WHATSAPP_URL?.trim() || PROFILE.social.whatsapp;
 const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
 
 const socialImageURL = new URL(
   ogImage ?? SITE.ogImage ?? "og.png",
-  Astro.url.origin
+  SITE.website
 ).href;
+
+const profileSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": new URL("/#website", SITE.website).href,
+      name: SITE.title,
+      url: SITE.website,
+      inLanguage: "ar",
+      description: SITE.desc,
+      publisher: { "@id": new URL("/about/#person", SITE.website).href },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: new URL("/search/?q={search_term_string}", SITE.website).href,
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      "@type": "Person",
+      "@id": new URL("/about/#person", SITE.website).href,
+      name: PROFILE.englishName,
+      alternateName: PROFILE.name,
+      url: new URL("/about/", SITE.website).href,
+      image: new URL(PROFILE.avatar, SITE.website).href,
+      jobTitle: "Digital Director",
+      sameAs: [
+        PROFILE.website,
+        PROFILE.social.linkedin,
+        PROFILE.social.facebook,
+        PROFILE.social.github,
+      ],
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -72,6 +103,7 @@ const socialImageURL = new URL(
       )
     }
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="آخر مقالات بلاي بوك ممدوح" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:locale" content="ar_AR" />
@@ -106,6 +138,8 @@ const socialImageURL = new URL(
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={socialImageURL} />
 
+    <script type="application/ld+json" set:html={JSON.stringify(profileSchema).replace(/</g, "\\u003c")} />
+
     <!-- JSON-LD Structured Data -->
     {
       schema && (
@@ -127,10 +161,7 @@ const socialImageURL = new URL(
 
     <slot />
 
-    <footer class="site-footer">
-      <a href="/">بلاي بوك ممدوح</a>
-      <span>معرفة تستحق وقتك</span>
-    </footer>
+    <BlogFooter />
     <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
 
     <script>
