@@ -4,11 +4,11 @@ Imports the PyMC-Marketing series into astro-blog/src/content/blog/
 with proper frontmatter, category assignment, ogImages, and hero illustrations.
 """
 
+import argparse
 import re
 from pathlib import Path
 
-SOURCE_DIR = Path("/Users/mamdouhaboammar/Downloads/arabic-guides/src/content/PyMC-Marketing")
-DEST_DIR = Path("/Users/mamdouhaboammar/Downloads/astro-blog/src/content/blog")
+DEST_DIR = Path(__file__).resolve().parents[1] / "src" / "content" / "blog"
 
 POST_CONFIG = {
     "pymc-marketing-01.md": {
@@ -55,8 +55,8 @@ POST_CONFIG = {
     },
 }
 
-def process_file(filename: str):
-    src_file = SOURCE_DIR / filename
+def process_file(filename: str, source_dir: Path):
+    src_file = source_dir / filename
     dest_file = DEST_DIR / filename
     
     cfg = POST_CONFIG[filename]
@@ -98,9 +98,19 @@ def process_file(filename: str):
     print(f"✅ Imported {filename} -> {dest_file.relative_to(DEST_DIR.parent)}")
 
 def main():
+    parser = argparse.ArgumentParser(description="Import PyMC guides into this checkout")
+    parser.add_argument("source_dir", type=Path, help="Directory containing six source Markdown files")
+    args = parser.parse_args()
+    source_dir = args.source_dir.expanduser().resolve()
+    if not source_dir.is_dir():
+        parser.error(f"Source directory does not exist: {source_dir}")
+    for filename in POST_CONFIG:
+        if not (source_dir / filename).is_file():
+            parser.error(f"Missing source: {source_dir / filename}")
+    DEST_DIR.mkdir(parents=True, exist_ok=True)
     print("🚀 Importing PyMC Marketing guides...")
     for filename in sorted(POST_CONFIG.keys()):
-        process_file(filename)
+        process_file(filename, source_dir)
     print("🎉 All 6 PyMC Marketing guides imported successfully!")
 
 if __name__ == "__main__":
