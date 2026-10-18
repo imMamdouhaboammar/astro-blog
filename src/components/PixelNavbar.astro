@@ -249,7 +249,7 @@ const isSearch = Astro.url.pathname === new URL(searchHref, Astro.url).pathname;
     border: 2px solid var(--pn-edge);
     border-radius: 7px;
     padding: 5px 16px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     font-weight: 700;
     line-height: 1.4;
     white-space: nowrap;
@@ -318,7 +318,22 @@ const isSearch = Astro.url.pathname === new URL(searchHref, Astro.url).pathname;
     }
     .pixel-nav-login {
       padding: 4px 10px;
-      font-size: 13px;
+      font-size: 0.8125rem;
+    }
+  }
+
+
+  @media (prefers-reduced-motion: reduce) {
+    .pixel-nav-avatar,
+    .pixel-nav-icon,
+    .pixel-nav-login {
+      transition: none;
+    }
+    .pixel-nav-avatar:hover,
+    .pixel-nav-icon:hover,
+    .pixel-nav-icon:active,
+    .pixel-nav-login:active {
+      transform: none;
     }
   }
 

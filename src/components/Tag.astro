@@ -17,7 +17,7 @@ const { tag, size = "sm" } = Astro.props;
     transition:name={tag}
     class={`${size === "sm" ? "text-sm" : "text-lg"} pr-2 group`}
   >
-    <svg
+    <svg aria-hidden="true" focusable="false"
       xmlns="http://www.w3.org/2000/svg"
       class={`${size === "sm" ? " scale-75" : "scale-110"}`}
       ><path

@@ -46,7 +46,7 @@ const schema = {
       <p class="about-role" lang="en" dir="ltr">{PROFILE.role}</p>
       <p class="about-summary">بشتغل في المنطقة اللي بتتقاطع فيها الاستراتيجية الرقمية، والتسويق، وبناء المنتجات المدعومة بالذكاء الاصطناعي. بحب أحوّل الأفكار المعقدة لحاجات عملية تقدر تستخدمها في شغلك.</p>
       <div class="about-links">
-        <a class="about-primary" href={PROFILE.social.whatsapp} target="_blank" rel="noopener noreferrer">اتواصل معايا على واتساب ↗</a>
+        <a class="about-primary" href={PROFILE.social.whatsapp} aria-label="واتساب، يفتح في تبويب جديد" target="_blank" rel="noopener noreferrer">اتواصل معايا على واتساب ↗</a>
         <a class="about-secondary" href="/posts/">اقرأ المقالات</a>
       </div>
     </header>
@@ -81,7 +81,7 @@ const schema = {
       <div class="about-section-head"><h2 id="about-social">تلاقيني فين؟</h2></div>
       <div class="about-social-grid">
         {SOCIAL_CHANNELS.map(ch => (
-          <a href={PROFILE.social[ch.key]} target="_blank" rel="noopener noreferrer">
+          <a href={PROFILE.social[ch.key]} aria-label={`${ch.title}، ${ch.description}، يفتح في تبويب جديد`} target="_blank" rel="noopener noreferrer">
             <strong>{ch.title} ↗</strong><span>{ch.description}</span>
           </a>
         ))}
@@ -93,7 +93,7 @@ const schema = {
       <div class="about-embed-grid">
         {linkedinPosts.map(post => (
           <article class="about-embed">
-            <div class="about-embed-header"><strong>LinkedIn</strong><a href={post.url} target="_blank" rel="noopener noreferrer">فتح المنشور ↗</a></div>
+            <div class="about-embed-header"><strong>LinkedIn</strong><a href={post.url} aria-label={`فتح منشور LinkedIn: ${post.title}، يفتح في تبويب جديد`} target="_blank" rel="noopener noreferrer">فتح المنشور ↗</a></div>
             <h3>{post.title}</h3>
             <p>{post.description}</p>
             <div class="about-embed-slot" data-embed-src={`https://www.linkedin.com/embed/feed/update/urn:li:activity:${post.id}`} data-embed-title={`منشور LinkedIn: ${post.title}`}>
@@ -102,7 +102,7 @@ const schema = {
           </article>
         ))}
         <article class="about-embed">
-          <div class="about-embed-header"><strong>Facebook</strong><a href={facebookPost && facebookEmbed ? facebookPost : PROFILE.social.facebook} target="_blank" rel="noopener noreferrer">افتح فيسبوك ↗</a></div>
+          <div class="about-embed-header"><strong>Facebook</strong><a href={facebookPost && facebookEmbed ? facebookPost : PROFILE.social.facebook} aria-label="فيسبوك، يفتح في تبويب جديد" target="_blank" rel="noopener noreferrer">افتح فيسبوك ↗</a></div>
           <h3>بوستات ونقاشات على فيسبوك</h3>
           {facebookEmbed ? (
             <div class="about-embed-slot" data-embed-src={facebookEmbed} data-embed-title="منشور ممدوح أبو عمّار على فيسبوك">
@@ -118,18 +118,18 @@ const schema = {
   .about-page{max-width:1150px;margin:24px auto 0;padding:48px;background:var(--surface);border-radius:12px}
   .about-hero{text-align:center;padding:24px 0 54px;border-bottom:1px solid var(--line)}
   .about-portrait{display:block;width:172px;height:172px;margin:0 auto 24px;object-fit:cover;image-rendering:pixelated;background:#fff8e9;border:4px solid #432b1c;border-radius:22px;box-shadow:0 8px 0 #d5bc97}
-  .about-hero h1{font-family:var(--font-heading);font-size:clamp(34px,5vw,56px);line-height:1.4;margin:0}
-  .about-role{color:var(--accent-dark);font-size:14px;font-weight:700;letter-spacing:.015em;margin:8px 0 18px}
-  .about-summary{max-width:660px;margin:0 auto;font-size:18px;line-height:2;color:#3f4a56;text-wrap:pretty}
+  .about-hero h1{font-family:var(--font-heading);font-size:clamp(2.125rem,5vw,3.5rem);line-height:1.4;margin:0}
+  .about-role{color:var(--accent-dark);font-size:0.875rem;font-weight:700;letter-spacing:.015em;margin:8px 0 18px}
+  .about-summary{max-width:660px;margin:0 auto;font-size:1.125rem;line-height:2;color:#3f4a56;text-wrap:pretty}
   .about-links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:26px}
   .about-links a{min-height:46px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;padding:10px 20px;font-weight:700}
   .about-primary{background:#286d60;color:white}.about-secondary{border:1px solid #bfc6cb}
   .about-section{padding:44px 0;border-bottom:1px solid var(--line)}.about-section:last-child{border:0;padding-bottom:0}
-  .about-section h2{font-family:var(--font-heading);font-size:29px;line-height:1.5;margin:0 0 20px}
+  .about-section h2{font-family:var(--font-heading);font-size:1.8125rem;line-height:1.5;margin:0 0 20px}
   .about-bio{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:55px}
-  .about-bio p{font-size:17px;line-height:2.1;margin:0 0 14px;max-width:65ch}
+  .about-bio p{font-size:1.0625rem;line-height:2.1;margin:0 0 14px;max-width:65ch}
   .about-expertise{padding:24px;background:#f6f8f7;border-radius:12px}
-  .about-expertise h3{font-size:16px;margin:0 0 16px}
+  .about-expertise h3{font-size:1rem;margin:0 0 16px}
   .about-expertise ul{padding-inline-start:20px;margin:0;line-height:2.15;direction:ltr;text-align:left}
   .about-section-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}
   .about-section-head h2{margin:0}
@@ -137,26 +137,26 @@ const schema = {
   .about-post-grid,.about-embed-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
   .about-post{display:flex;flex-direction:column;min-width:0;background:#f8faf9;padding:22px;border:1px solid var(--line);border-radius:12px}
   .about-post:hover,.about-post:focus-visible{border-color:var(--accent-dark);background:#f3f8f6}
-  .about-category{font-size:12px;color:var(--accent-dark);font-weight:700}
-  .about-post h3{font-family:var(--font-heading);font-size:19px;margin:12px 0 8px;line-height:1.7;overflow-wrap:anywhere}
-  .about-post p{color:var(--muted);font-size:14px;line-height:1.9;margin:0 0 16px}
-  .about-read-link{margin-top:auto;color:var(--accent-dark);font-weight:700;font-size:13px}
+  .about-category{font-size:0.75rem;color:var(--accent-dark);font-weight:700}
+  .about-post h3{font-family:var(--font-heading);font-size:1.1875rem;margin:12px 0 8px;line-height:1.7;overflow-wrap:anywhere}
+  .about-post p{color:var(--muted);font-size:0.875rem;line-height:1.9;margin:0 0 16px}
+  .about-read-link{margin-top:auto;color:var(--accent-dark);font-weight:700;font-size:0.8125rem}
   .about-social-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
   .about-social-grid a{display:flex;flex-direction:column;gap:6px;padding:17px;border:1px solid var(--line);border-radius:10px;min-width:0}
-  .about-social-grid a:hover{border-color:var(--accent-dark)}.about-social-grid strong{font-size:15px}
-  .about-social-grid span{color:var(--muted);font-size:12px;overflow-wrap:anywhere}
+  .about-social-grid a:hover{border-color:var(--accent-dark)}.about-social-grid strong{font-size:0.9375rem}
+  .about-social-grid span{color:var(--muted);font-size:0.75rem;overflow-wrap:anywhere}
   .about-embed{min-width:0;padding:20px;border:1px solid var(--line);border-radius:12px;background:#fafbfb}
-  .about-embed-header{display:flex;justify-content:space-between;gap:12px;font-size:13px}
+  .about-embed-header{display:flex;justify-content:space-between;gap:12px;font-size:0.8125rem}
   .about-embed-header a{color:var(--accent-dark);font-weight:700}
-  .about-embed h3{font-size:17px;margin:15px 0 8px;line-height:1.7}
-  .about-embed p{font-size:14px;line-height:1.9;color:var(--muted)}
+  .about-embed h3{font-size:1.0625rem;margin:15px 0 8px;line-height:1.7}
+  .about-embed p{font-size:0.875rem;line-height:1.9;color:var(--muted)}
   .about-embed-slot{min-height:182px;margin-top:16px;border-radius:9px;background:#eef4f1;display:flex;align-items:center;justify-content:center;padding:16px}
   .about-embed-slot button{min-height:46px;border:1px solid #286d60;color:#1c5143;background:#fff;border-radius:8px;padding:9px 18px;font-weight:700}
   .about-embed-slot button:hover,.about-embed-slot button:focus-visible{background:#e4f3ec;outline-offset:3px}
   .about-embed-slot iframe{border:0;border-radius:8px;display:block;width:100%;height:320px;background:#fff}
   .about-embed-slot:has(iframe){display:block;padding:0;background:transparent}
   @media(max-width:900px){.about-page{margin:20px 24px 0;padding:32px}.about-bio{gap:28px}.about-social-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media(max-width:640px){.about-page{margin:16px 14px 0;padding:24px 20px}.about-portrait{width:140px;height:140px}.about-hero{padding-top:10px}.about-summary{font-size:16px}.about-section{padding:32px 0}.about-section h2{font-size:24px}.about-bio,.about-post-grid,.about-embed-grid{grid-template-columns:minmax(0,1fr)}.about-social-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.about-social-grid a{padding:12px}.about-links a{width:100%}}
+  @media(max-width:640px){.about-page{margin:16px 14px 0;padding:24px 20px}.about-portrait{width:140px;height:140px}.about-hero{padding-top:10px}.about-summary{font-size:1rem}.about-section{padding:32px 0}.about-section h2{font-size:1.5rem}.about-bio,.about-post-grid,.about-embed-grid{grid-template-columns:minmax(0,1fr)}.about-social-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.about-social-grid a{padding:12px}.about-links a{width:100%}}
 </style>
 
 <script>
