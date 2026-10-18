@@ -54,6 +54,43 @@ def verify_viewport(page, width, route):
         assert isinstance(schema, dict) and schema.get("@context") == "https://schema.org", (
             f"{route}: invalid JSON-LD root or schema context"
         )
+    if route == "/":
+        heading = page.locator(".playbook-card .playbook-title").first
+        assert heading.evaluate("(el) => el.tagName") == "H2", "Playbook heading skips level h2"
+
+    for section in (".editorial-footer", ".about-page"):
+        for link in page.locator(f'{section} a[target="_blank"]').all():
+            accessible_warning = link.get_attribute("aria-label") or ""
+            if link.locator(".sr-only").count():
+                accessible_warning += " " + link.locator(".sr-only").all_text_contents()[0]
+            assert "تبويب" in accessible_warning, f"{route}: new-tab link lacks screen-reader warning"
+
+    if width == 1280:
+        font_selector = ".footer-identity"
+        if route == "/":
+            font_selector = ".pixel-action"
+        elif route == "/about/":
+            font_selector = ".about-summary"
+        original = page.locator(font_selector).first.evaluate(
+            "(el) => parseFloat(getComputedStyle(el).fontSize)"
+        )
+        page.evaluate("document.documentElement.style.fontSize = '32px'")
+        enlarged = page.locator(font_selector).first.evaluate(
+            "(el) => parseFloat(getComputedStyle(el).fontSize)"
+        )
+        page.evaluate("document.documentElement.style.removeProperty('font-size')")
+        assert enlarged >= original * 1.9, f"{route}: text does not respect larger root font size"
+
+        page.emulate_media(reduced_motion="reduce")
+        avatar = page.locator(".pixel-nav-avatar")
+        assert avatar.evaluate("(el) => getComputedStyle(el).transitionDuration") == "0s", (
+            f"{route}: navbar ignores reduced-motion preference"
+        )
+        avatar.hover()
+        assert avatar.evaluate("(el) => getComputedStyle(el).transform") == "none", (
+            f"{route}: navbar still moves on hover with reduced motion"
+        )
+        page.emulate_media(reduced_motion="no-preference")
     assert page.locator(".pixel-nav-search").count() == 1, f"{route}: search unreachable"
     assert page.locator('a[href="/#login"]').count() == 0, "Broken login link is back"
     assert page.locator('a[href="https://wa.me/201000000000"]').count() == 0, "Placeholder WhatsApp link is back"
