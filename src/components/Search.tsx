@@ -98,13 +98,21 @@ export default function SearchBar({ searchList }: Props) {
         </div>
       )}
 
+      {inputVal.trim().length > 1 && searchResults?.length === 0 && (
+        <p className="search-empty">
+          جرّب كلمة مختلفة أو ابحث باسم الموضوع بدلًا من عنوانه الكامل.
+        </p>
+      )}
+
       {searchResults && searchResults.length > 0 && (
         <ul className="search-results-list" role="list">
           {searchResults.map(({ item, refIndex }) => (
             <li key={`${refIndex}-${item.slug}`} className="search-result-item">
               <a href={`/posts/${item.slug}/`}>
                 <h3 dir="auto">{item.title}</h3>
-                <p dir="auto">{item.description}</p>
+                {item.description !== item.title && (
+                  <p dir="auto">{item.description}</p>
+                )}
               </a>
             </li>
           ))}

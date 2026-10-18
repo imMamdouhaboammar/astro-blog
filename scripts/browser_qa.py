@@ -38,6 +38,8 @@ def verify_viewport(page, width, route):
     for link in page.locator(".pixel-nav-capsule a").all():
         box = link.bounding_box()
         assert box is not None and box["x"] >= -1 and box["x"] + box["width"] <= width + 1, f"{route}: navigation link outside viewport"
+        if width <= 375 and ("pixel-nav-icon" in (link.get_attribute("class") or "") or "pixel-nav-avatar" in (link.get_attribute("class") or "")):
+            assert box["width"] >= 44 and box["height"] >= 44, f"{route}: small navigation touch target"
 
 
 def main():
@@ -52,9 +54,17 @@ def main():
                 errors = []
                 page.on("pageerror", lambda error: errors.append(str(error)))
                 for route in ROUTES:
-                    page.goto(f"{BASE_URL}{route}", wait_until="networkidle")
+                    response = page.goto(f"{BASE_URL}{route}", wait_until="networkidle")
+                    assert response is not None and response.status == 200, f"{route}: expected 200, got {response.status if response else 'no response'}"
                     page.evaluate("document.fonts.ready")
                     verify_viewport(page, width, route)
+                    if route == "/":
+                        header = page.locator(".playbooks-header")
+                        fits = header.evaluate("(el) => el.scrollWidth <= el.clientWidth + 1")
+                        assert fits, f"Homepage action header overflows at {width}px"
+                        page.screenshot(path=str(SCREENSHOTS / f"home-{width}.png"), full_page=True)
+                    elif route.startswith("/posts/"):
+                        page.screenshot(path=str(SCREENSHOTS / f"article-{width}.png"), full_page=True)
                 assert "البحث" not in page.title(), "Post page should have the article title"
                 page.goto(BASE_URL, wait_until="networkidle")
                 assert page.locator(".playbook-card").count() > 0, "Home playbook is missing"
@@ -65,6 +75,10 @@ def main():
                 search.fill("PyMC")
                 page.locator(".search-result-item").first.wait_for()
                 assert page.locator(".search-result-item").count() >= 1, "Known published posts missing from search"
+                search.fill("zz-nonexistent-topic-347120")
+                assert page.locator(".search-empty").is_visible(), "No-results explanation is missing"
+                search.fill("PyMC")
+                page.locator(".search-result-item").first.wait_for()
                 page.screenshot(path=str(SCREENSHOTS / f"search-{width}.png"), full_page=True)
                 assert not errors, f"Browser console errors at {width}px: {errors}"
                 print(f"PASS: RTL, navbar, search, category, article, overflow at {width}px")

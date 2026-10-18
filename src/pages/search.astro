@@ -20,14 +20,14 @@ const searchList = sortedPosts.map(({ data, slug }) => ({
   title={`البحث | ${SITE.title}`}
   description="ابحث في جميع البلاي بوكس التقنية"
 >
-  <main class="home-panel" id="main">
+  <main class="home-panel search-page" id="main">
     <div class="home-heading">
       <div>
         <h1>البحث في البلاي بوكس</h1>
         <p>ابحث عن المفاهيم والشروحات البرمجية والتقنية</p>
       </div>
     </div>
-    <div class="search-panel" style="margin: 0; padding: 0;">
+    <div class="search-panel">
       <SearchBar client:load searchList={searchList} />
     </div>
   </main>

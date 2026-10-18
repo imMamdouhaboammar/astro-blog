@@ -84,7 +84,13 @@ const isSearch = Astro.url.pathname === new URL(searchHref, Astro.url).pathname;
 
     <!-- البحث وإجراءات الحساب -->
     <div class="pixel-nav-side pixel-nav-side--action">
-      <a class="pixel-nav-icon pixel-nav-search" href={searchHref} aria-label="البحث" title="البحث" aria-current={isSearch ? "page" : undefined}>
+      <a
+        class="pixel-nav-icon pixel-nav-search"
+        href={searchHref}
+        aria-label="البحث"
+        title="البحث"
+        aria-current={isSearch ? "page" : undefined}
+      >
         <PixelIcon name="search" size={24} />
       </a>
       {
@@ -282,6 +288,17 @@ const isSearch = Astro.url.pathname === new URL(searchHref, Astro.url).pathname;
       border-block-start: 1px solid var(--pn-shadow);
       padding-block-start: 8px;
     }
+    .pixel-nav-side {
+      gap: 6px;
+    }
+    .pixel-nav-icon,
+    .pixel-nav-avatar {
+      inline-size: 44px;
+      block-size: 44px;
+    }
+    .pixel-nav-login {
+      min-block-size: 44px;
+    }
   }
 
   @media (max-width: 620px) {
@@ -292,16 +309,8 @@ const isSearch = Astro.url.pathname === new URL(searchHref, Astro.url).pathname;
       gap: 10px;
       padding: 6px 10px;
     }
-    .pixel-nav-avatar {
-      inline-size: 36px;
-      block-size: 36px;
-    }
     .pixel-nav-socials {
-      gap: 6px;
-    }
-    .pixel-nav-icon {
-      inline-size: 28px;
-      block-size: 28px;
+      gap: 8px;
     }
     .pixel-nav-icon svg {
       width: 20px;
