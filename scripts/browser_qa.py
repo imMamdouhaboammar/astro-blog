@@ -122,7 +122,20 @@ def main():
                 page.locator("astro-island[ssr]").wait_for(state="detached", timeout=20000)
                 search = page.locator('input[type="search"]')
                 search.fill("PyMC")
-                page.locator(".search-result-item").first.wait_for()
+                try:
+                    page.locator(".search-result-item").first.wait_for(timeout=8000)
+                except Exception:
+                    print("SEARCH DIAGNOSTIC:", {
+                        "url": page.url,
+                        "input": search.input_value(),
+                        "status": page.locator(".search-status").all_text_contents(),
+                        "empty": page.locator(".search-empty").all_text_contents(),
+                        "islands": page.locator("astro-island").count(),
+                        "pageErrors": errors,
+                        "scripts": page.locator('script[src]').evaluate_all("(els) => els.map(e => e.src)"),
+                    }, flush=True)
+                    page.screenshot(path=str(SCREENSHOTS / f"search-failed-{width}.png"), full_page=True)
+                    raise
                 assert page.locator(".search-result-item").count() >= 1, "Known published posts missing from search"
                 search.fill("zz-nonexistent-topic-347120")
                 assert page.locator(".search-empty").is_visible(), "No-results explanation is missing"
