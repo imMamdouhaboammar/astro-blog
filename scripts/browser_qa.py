@@ -67,10 +67,25 @@ def main():
                             grid_width = page.locator(".playbooks-grid").bounding_box()["width"]
                             assert card_width >= grid_width * 0.8, "Single Playbook card leaves a large empty area"
                         assert page.locator(".pinned-thumb img").first.evaluate("(img) => img.complete && img.naturalWidth > 0"), "Pinned post icons failed to load"
+                        if width <= 375:
+                            compact = page.locator(".pixel-actions--compact .pixel-action").first.bounding_box()
+                            assert compact is not None and compact["height"] >= 44, "Compact share button has an undersized touch target"
                         page.screenshot(path=str(SCREENSHOTS / f"home-{width}.png"), full_page=True)
+                    elif route.startswith("/categories/"):
+                        summary = page.locator(".category-disclosure summary")
+                        expected_tabindex = "-1" if width > 960 else "0"
+                        assert summary.get_attribute("tabindex") == expected_tabindex, "Sidebar disclosure is incorrectly keyboard focusable"
                     elif route.startswith("/posts/"):
                         page.screenshot(path=str(SCREENSHOTS / f"article-{width}.png"), full_page=True)
                 assert "البحث" not in page.title(), "Post page should have the article title"
+                if width in (375, 1280):
+                    response = page.goto(f"{BASE_URL}/posts/pymc-marketing-04/", wait_until="networkidle")
+                    assert response is not None and response.status == 200, "Emoji regression article returned an error"
+                    emoji = page.locator('.article-body p img[src^="data:image/"]').first
+                    assert emoji.count() > 0, "Emoji image fixture is missing"
+                    display = emoji.evaluate("(img) => getComputedStyle(img).display")
+                    assert display == "inline-block", f"Inline emoji breaks prose: {display}"
+                    assert emoji.bounding_box()["width"] <= 24, "Emoji appears as a large block illustration"
                 page.goto(BASE_URL, wait_until="networkidle")
                 assert page.locator(".playbook-card").count() > 0, "Home playbook is missing"
                 page.locator(".pixel-nav-search").click()
