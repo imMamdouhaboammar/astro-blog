@@ -86,9 +86,9 @@ def process_file(filename: str, source_dir: Path):
     
     # The page layout renders heroImage; avoid duplicating it in Markdown.
     body = body.lstrip()
-    leading_image = re.match(r"^!\\[[^\\]]*\\]\\(([^)]+)\\)\\s*", body)
-    if leading_image and leading_image.group(1) == cfg["heroImage"]:
-        body = body[leading_image.end():].lstrip()
+    first_line = body.splitlines()[0] if body else ""
+    if first_line.startswith("![") and first_line.endswith(f"]({cfg['heroImage']})"):
+        body = body[len(first_line):].lstrip()
     
     # If part 4, also embed part-7 (connector mismatch) where contract drift is explained
     if filename == "pymc-marketing-04.md":
