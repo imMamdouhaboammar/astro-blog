@@ -12,6 +12,7 @@ import {
   getPostImage,
 } from "@utils/categories";
 import getSortedPosts from "@utils/getSortedPosts";
+import { slugifyStr } from "@utils/slugify";
 import { getCollection } from "astro:content";
 
 export interface Props {
@@ -45,6 +46,10 @@ if (related.length === 0) {
 }
 
 const ogImageUrl = typeof ogImage === "string" ? ogImage : ogImage?.src;
+const postSocialImage = new URL(
+  ogImageUrl ?? `/posts/${slugifyStr(title)}.png`,
+  Astro.url.origin
+).href;
 const postCanonical = canonicalURL ?? new URL(postUrl(post), Astro.site).href;
 
 const schema = {
@@ -99,7 +104,7 @@ const formattedDate = new Intl.DateTimeFormat("ar-EG", {
   title={title}
   author={author}
   description={description}
-  ogImage={ogImageUrl}
+  ogImage={postSocialImage}
   canonicalURL={postCanonical}
   pubDatetime={pubDatetime}
   modDatetime={modDatetime}

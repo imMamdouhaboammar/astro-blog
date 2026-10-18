@@ -8,7 +8,6 @@ import getSortedPosts from "@utils/getSortedPosts";
 import {
   getCategoryForPost,
   postUrl,
-  getPostImage,
   PLAYBOOKS,
 } from "@utils/categories";
 
@@ -97,7 +96,7 @@ const socialChannels = [
           aria-labelledby="pinned-heading"
         >
           <div class="pinned-header">
-            <h2 id="pinned-heading">بوستات مثبتة</h2>
+            <h2 id="pinned-heading">أحدث البوستات</h2>
             <a class="pinned-view-all" href="/posts/">
               <span>عرض جميع البوستات</span>
               <Icon name="arrow" size={15} />
@@ -106,7 +105,7 @@ const socialChannels = [
           <div class="pinned-grid">
             {pinnedPosts.map(post => {
               const cat = getCategoryForPost(post);
-              const thumbImg = getPostImage(post) || `/icons/${cat.icon}.png`;
+              const thumbImg = `/icons/${cat.icon}.png`;
               return (
                 <a class="pinned-post-card" href={postUrl(post)}>
                   <div class="pinned-thumb">

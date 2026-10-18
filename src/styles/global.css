@@ -872,6 +872,8 @@ button:active {
   display: block;
   margin: 28px auto;
   background: transparent;
+  border-radius: 8px;
+  border: 1px solid var(--line);
 }
 
 .article-body h2 {
@@ -920,14 +922,6 @@ button:active {
   background: #fbfcfc;
   border-radius: 0 8px 8px 0;
   padding: 14px 20px;
-}
-
-.article-body img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin: 20px 0;
-  border: 1px solid var(--line);
 }
 
 .article-body table {
@@ -1620,6 +1614,56 @@ button:active {
   margin-top: 20px;
 }
 
+/* A single series should use the available editorial canvas, not leave a blank grid. */
+.playbooks-grid:has(> :only-child) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.playbooks-grid:has(> :only-child) .playbook-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  grid-template-rows: auto 1fr;
+  align-items: start;
+  column-gap: 28px;
+  min-height: 295px;
+}
+
+.playbooks-grid:has(> :only-child) .playbook-badge {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.playbooks-grid:has(> :only-child) .playbook-title {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: 23px;
+  align-self: center;
+}
+
+.playbooks-grid:has(> :only-child) .playbook-thumb {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  margin-top: 0;
+  height: 255px;
+  aspect-ratio: auto;
+}
+
+@media (max-width: 760px) {
+  .playbooks-grid:has(> :only-child) .playbook-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 270px;
+  }
+  .playbooks-grid:has(> :only-child) .playbook-title {
+    font-size: 16px;
+  }
+  .playbooks-grid:has(> :only-child) .playbook-thumb {
+    margin-top: auto;
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+}
+
 @media (max-width: 560px) {
   .playbooks-grid {
     grid-template-columns: 1fr;
@@ -1710,6 +1754,19 @@ button:active {
   letter-spacing: -0.01em;
 }
 
+@media (max-width: 620px) {
+  .pinned-header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .pinned-header h2 {
+    flex: 1 1 100%;
+  }
+  .pinned-view-all {
+    min-height: 44px;
+  }
+}
+
 .pinned-view-all {
   background: #0f172a;
   color: #ffffff;
@@ -1772,19 +1829,18 @@ button:active {
 }
 
 .pinned-thumb img {
-  max-width: 44px;
-  max-height: 44px;
+  max-width: 40px;
+  max-height: 40px;
   width: auto;
   height: auto;
   object-fit: contain;
-  filter: grayscale(100%) opacity(0.45);
-  transition: filter 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+  image-rendering: pixelated;
   display: block;
+  transition: transform 0.15s ease;
 }
 
 .pinned-post-card:hover .pinned-thumb img {
-  filter: grayscale(0%) opacity(1);
-  transform: scale(1.12);
+  transform: translateY(-2px);
 }
 
 .pinned-copy {

@@ -39,6 +39,7 @@ const {
 const pageTitle = formatPageTitle(title, SITE.title);
 const loginHref = import.meta.env.PUBLIC_LOGIN_URL?.trim() || undefined;
 const whatsappHref = import.meta.env.PUBLIC_WHATSAPP_URL?.trim() || undefined;
+const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
 
 const socialImageURL = new URL(
   ogImage ?? SITE.ogImage ?? "og.png",
@@ -65,6 +66,11 @@ const socialImageURL = new URL(
     <meta name="title" content={pageTitle} />
     <meta name="description" content={description} />
     <meta name="author" content={author} />
+    {
+      googleSiteVerification && (
+        <meta name="google-site-verification" content={googleSiteVerification} />
+      )
+    }
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <!-- Open Graph / Facebook -->
