@@ -126,9 +126,10 @@ def main():
                         fits = header.evaluate("(el) => el.scrollWidth <= el.clientWidth + 1")
                         assert fits, f"Homepage action header overflows at {width}px"
                         if width >= 960 and page.locator(".playbooks-grid > .playbook-card").count() == 1:
-                            card_width = page.locator(".playbook-card").first.bounding_box()["width"]
-                            grid_width = page.locator(".playbooks-grid").bounding_box()["width"]
-                            assert card_width >= grid_width * 0.8, "Single Playbook card leaves a large empty area"
+                            card_box = page.locator(".playbook-card").first.bounding_box()
+                            assert card_box is not None, "Playbook card bounding box not found"
+                            aspect_ratio = card_box["width"] / card_box["height"]
+                            assert 0.8 <= aspect_ratio <= 1.25, f"Playbook card is not a square box (ratio: {aspect_ratio})"
                         assert page.locator(".pinned-thumb img").first.evaluate("(img) => img.complete && img.naturalWidth > 0"), "Pinned post icons failed to load"
                         if width <= 375:
                             compact = page.locator(".pixel-actions--compact .pixel-action").first.bounding_box()
